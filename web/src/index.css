@@ -60,6 +60,50 @@ body {
     fill 0.2s ease;
 }
 
+/* Animated wave logo: drifting blue tones + a soft pulsing glow + gentle bob. */
+@keyframes wave-hue {
+  0% {
+    color: #38bdf8;
+  }
+  25% {
+    color: #22d3ee;
+  }
+  50% {
+    color: #60a5fa;
+  }
+  75% {
+    color: #818cf8;
+  }
+  100% {
+    color: #38bdf8;
+  }
+}
+@keyframes wave-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 1px rgba(56, 189, 248, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9));
+  }
+}
+@keyframes wave-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+.wave-mark {
+  color: #38bdf8;
+  animation:
+    wave-hue 6s linear infinite,
+    wave-glow 3s ease-in-out infinite,
+    wave-bob 3.5s ease-in-out infinite;
+}
+
 /* Animated moving-gradient text for impactful titles. */
 @keyframes gradient-flow {
   to {
@@ -190,7 +234,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .gradient-text,
   .aurora-blob,
-  .fade-up {
+  .fade-up,
+  .wave-mark {
     animation: none;
   }
   .reveal {

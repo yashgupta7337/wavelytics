@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "../lib/supabase.js";
 import { scorePassword } from "../lib/passwordStrength.js";
 import PasswordStrength from "./PasswordStrength.jsx";
+import WaveMark from "./WaveMark.jsx";
 
 // Full-page sign in / create account experience. Two-column card (brand panel +
 // form) floating over a drifting aurora background; a segmented control slides
@@ -197,7 +198,8 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
                 "radial-gradient(120% 100% at 0% 0%, rgba(56,189,248,0.18) 0%, rgba(15,23,42,0) 60%)",
             }}
           >
-            <a href="/" className="flex items-baseline gap-2">
+            <a href="/" className="flex items-center gap-2">
+              <WaveMark className="h-6 w-6 shrink-0" />
               <span className="text-lg font-bold tracking-tight text-ink">Wavelytics</span>
               <span className="text-xs text-muted">a product by WaveConnect</span>
             </a>
@@ -222,7 +224,8 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
 
           {/* Form panel */}
           <div className="p-7 sm:p-9">
-            <a href="/" className="mb-6 flex items-baseline gap-2 lg:hidden">
+            <a href="/" className="mb-6 flex items-center gap-2 lg:hidden">
+              <WaveMark className="h-6 w-6 shrink-0" />
               <span className="text-lg font-bold tracking-tight text-ink">Wavelytics</span>
               <span className="text-xs text-muted">a product by WaveConnect</span>
             </a>

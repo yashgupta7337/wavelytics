@@ -4,6 +4,7 @@ import { useAlerts } from "./useAlerts.js";
 import { useAuth } from "./useAuth.js";
 import AuthScreen from "./components/AuthScreen.jsx";
 import ThemeToggle from "./components/ThemeToggle.jsx";
+import WaveMark from "./components/WaveMark.jsx";
 import UploadPanel from "./components/UploadPanel.jsx";
 import RulesPanel from "./components/RulesPanel.jsx";
 import AuditReport from "./components/AuditReport.jsx";
@@ -124,9 +125,14 @@ export default function App() {
     <div className="min-h-screen overflow-x-hidden">
       <header className="border-b border-line bg-surface/40 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <a href="/" className="block">
-            <h1 className="text-lg font-bold text-ink">Wavelytics</h1>
-            <p className="text-xs text-muted">Operations &amp; Compliance Intelligence</p>
+          <a href="/" className="flex items-center gap-2">
+            <WaveMark className="h-7 w-7 shrink-0" />
+            <span>
+              <span className="block text-lg font-bold leading-tight text-ink">Wavelytics</span>
+              <span className="block text-xs text-muted">
+                Operations &amp; Compliance Intelligence
+              </span>
+            </span>
           </a>
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
             <span className="flex items-center gap-2">

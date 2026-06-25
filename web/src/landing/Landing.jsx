@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import GradientText from "../components/GradientText.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
+import WaveMark from "../components/WaveMark.jsx";
 import Reveal from "./Reveal.jsx";
 
 // Wavelytics marketing landing page — the public front door at "/".
@@ -36,25 +37,6 @@ const NAV_LINKS = [
   ["#contact", "Contact us"],
 ];
 
-// Small inline wave mark used as the wordmark glyph. (Favicon uses the Flaticon
-// "wave" icon — credited in README.)
-function WaveMark({ className = "h-6 w-6" }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={`${className} text-sky-400`}
-      aria-hidden="true"
-    >
-      <path d="M2 8c2 0 2 1.8 4 1.8S8 8 10 8s2 1.8 4 1.8S16 8 18 8s2 1.8 4 1.8" />
-      <path d="M2 14c2 0 2 1.8 4 1.8S8 14 10 14s2 1.8 4 1.8S16 14 18 14s2 1.8 4 1.8" />
-    </svg>
-  );
-}
 
 function LiveDot() {
   return (
@@ -560,7 +542,8 @@ const TEAM = [
         from the ground up — a telecom business delivering services and expertise
         pan-India alongside premium OEMs, with a track record of excellence and
         quality. Wavelytics is the next layer: the intelligence platform the group
-        needed and couldn't find.
+        needed and couldn't find. B.Tech in Electrical and Electronics Engineering
+        from BITS Pilani.
       </>
     ),
   },

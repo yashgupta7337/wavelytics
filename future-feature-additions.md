@@ -44,6 +44,16 @@ Add a `tenant_settings(tenant_id, slack_webhook_url, email_enabled, ...)` table 
 a small UI in the existing Rules/settings area so each client configures their own
 channels, instead of deployment-wide env vars.
 
+## Branded auth emails via custom SMTP (deferred)
+Supabase only allows editing the auth email templates (e.g. the branded
+`docs/supabase-confirm-email.html`) when **custom SMTP** is configured; the
+built-in sender is locked to the plain default template and rate-limited
+(~3–4/hour). To ship the branded confirmation email + higher limits: set up
+**Resend** (free tier), verify the `waveconnect.net.in` sending domain via DNS
+(SPF/DKIM on a `send.` subdomain so it won't touch the existing `info@` mail),
+then point Supabase SMTP at `smtp.resend.com:465` (user `resend`, password = the
+Resend API key, sender `noreply@waveconnect.net.in`). No app code changes.
+
 ## Other candidates
 - **Password reset completion page** — `resetPasswordForEmail` already sends the
   link; add a `/app/` handler for the recovery token to set a new password.
