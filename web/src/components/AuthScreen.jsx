@@ -118,11 +118,11 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
   }
 
   const inputCls =
-    "w-full rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-sky-500";
+    "w-full rounded-lg border border-line bg-surface-2/80 px-3 py-2.5 text-sm text-ink outline-none transition focus:border-sky-500";
   const errInputCls = "border-rose-500/70 focus:border-rose-500";
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-14">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-bg px-4 py-14">
       {/* Drifting aurora background */}
       <div className="pointer-events-none absolute inset-0">
         <span
@@ -162,7 +162,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
       {/* Back to site — pill ghost button, outside the card, top-left */}
       <a
         href="/"
-        className="group absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900/60 px-3.5 py-1.5 text-xs font-medium text-slate-300 backdrop-blur transition hover:border-sky-500/60 hover:bg-sky-500/10 hover:text-white"
+        className="group absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-line/70 bg-surface/60 px-3.5 py-1.5 text-xs font-medium text-muted backdrop-blur transition hover:border-sky-500/60 hover:bg-sky-500/10 hover:text-ink"
       >
         <svg
           viewBox="0 0 24 24"
@@ -180,7 +180,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
       </a>
 
       <div className="relative z-10 w-full max-w-4xl">
-        <div className="grid overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl backdrop-blur-xl lg:grid-cols-2">
+        <div className="grid overflow-hidden rounded-2xl border border-line bg-surface/80 shadow-2xl backdrop-blur-xl lg:grid-cols-2">
           {/* Brand / value panel */}
           <div
             className="relative hidden flex-col justify-between p-8 lg:flex"
@@ -190,37 +190,37 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
             }}
           >
             <a href="/" className="flex items-baseline gap-2">
-              <span className="text-lg font-bold tracking-tight text-slate-100">Wavelytics</span>
-              <span className="text-xs text-slate-500">a product by WaveConnect</span>
+              <span className="text-lg font-bold tracking-tight text-ink">Wavelytics</span>
+              <span className="text-xs text-muted">a product by WaveConnect</span>
             </a>
             <div className="my-8">
-              <h2 className="text-2xl font-bold leading-snug text-slate-100">
+              <h2 className="text-2xl font-bold leading-snug text-ink">
                 Operations &amp; Compliance Intelligence
               </h2>
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-2 text-sm text-muted">
                 One pane of glass over service performance, risk, and audit readiness.
               </p>
               <ul className="mt-6 space-y-3">
                 {VALUE_POINTS.map((p) => (
-                  <li key={p} className="flex items-start gap-2 text-sm text-slate-300">
+                  <li key={p} className="flex items-start gap-2 text-sm text-muted">
                     <span className="mt-0.5 text-sky-400">✓</span>
                     {p}
                   </li>
                 ))}
               </ul>
             </div>
-            <p className="text-xs text-slate-600">© 2026 Wavelytics · a product by WaveConnect</p>
+            <p className="text-xs text-faint">© 2026 Wavelytics · a product by WaveConnect</p>
           </div>
 
           {/* Form panel */}
           <div className="p-7 sm:p-9">
             <a href="/" className="mb-6 flex items-baseline gap-2 lg:hidden">
-              <span className="text-lg font-bold tracking-tight text-slate-100">Wavelytics</span>
-              <span className="text-xs text-slate-500">a product by WaveConnect</span>
+              <span className="text-lg font-bold tracking-tight text-ink">Wavelytics</span>
+              <span className="text-xs text-muted">a product by WaveConnect</span>
             </a>
 
             {/* Sliding segmented toggle */}
-            <div className="relative grid grid-cols-2 rounded-lg border border-slate-800 bg-slate-800/60 p-1 text-sm font-semibold">
+            <div className="relative grid grid-cols-2 rounded-lg border border-line bg-surface-2/60 p-1 text-sm font-semibold">
               <span
                 className={`absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-md bg-sky-500 shadow transition-transform duration-300 ease-out ${
                   isSignup ? "translate-x-[calc(100%+0.25rem)]" : "translate-x-0"
@@ -230,7 +230,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
                 type="button"
                 onClick={() => switchMode("signin")}
                 className={`relative z-10 rounded-md py-2 text-center transition-colors ${
-                  isSignup ? "text-slate-400 hover:text-slate-200" : "text-white"
+                  isSignup ? "text-muted hover:text-ink" : "text-white"
                 }`}
               >
                 Sign in
@@ -239,7 +239,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
                 type="button"
                 onClick={() => switchMode("signup")}
                 className={`relative z-10 rounded-md py-2 text-center transition-colors ${
-                  isSignup ? "text-white" : "text-slate-400 hover:text-slate-200"
+                  isSignup ? "text-white" : "text-muted hover:text-ink"
                 }`}
               >
                 Create account
@@ -248,10 +248,10 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
 
             {/* Heading fades up on each mode switch */}
             <div key={mode} className="fade-up">
-              <h1 className="mt-6 text-xl font-bold text-slate-100">
+              <h1 className="mt-6 text-xl font-bold text-ink">
                 {isSignup ? "Create your account" : "Welcome back"}
               </h1>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-muted">
                 {isSignup
                   ? "Start with your work email — your whole team shares one workspace."
                   : "Sign in to your Wavelytics workspace."}
@@ -352,7 +352,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
                 <button
                   type="button"
                   onClick={forgotPassword}
-                  className="w-full text-center text-xs text-slate-500 transition hover:text-slate-300"
+                  className="w-full text-center text-xs text-muted transition hover:text-muted"
                 >
                   Forgot password?
                 </button>
@@ -362,7 +362,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
         </div>
 
         {/* Continue to demo — outside / below the card */}
-        <p className="mt-5 text-center text-sm text-slate-500">
+        <p className="mt-5 text-center text-sm text-muted">
           Just exploring?{" "}
           <button
             onClick={onSkip}

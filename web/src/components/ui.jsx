@@ -3,12 +3,12 @@
 export function Card({ title, subtitle, children, className = "" }) {
   return (
     <div
-      className={`rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm ${className}`}
+      className={`rounded-xl border border-line bg-surface/60 p-4 shadow-sm ${className}`}
     >
       {title && (
         <div className="mb-3">
-          <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
-          {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+          <h3 className="text-sm font-semibold text-ink">{title}</h3>
+          {subtitle && <p className="text-xs text-muted">{subtitle}</p>}
         </div>
       )}
       {children}
@@ -18,33 +18,33 @@ export function Card({ title, subtitle, children, className = "" }) {
 
 export function KpiCard({ label, value, unit, tone = "default", hint }) {
   const tones = {
-    default: "text-slate-100",
+    default: "text-ink",
     good: "text-emerald-400",
     warn: "text-amber-400",
     bad: "text-rose-400",
   };
   return (
     <Card>
-      <p className="text-xs uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="text-xs uppercase tracking-wide text-muted">{label}</p>
       <p className={`mt-1 text-3xl font-bold tabular-nums ${tones[tone]}`}>
         {value}
-        {unit && <span className="ml-1 text-lg font-medium text-slate-400">{unit}</span>}
+        {unit && <span className="ml-1 text-lg font-medium text-muted">{unit}</span>}
       </p>
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
     </Card>
   );
 }
 
 export function Stat({ label, value, tone = "default" }) {
   const tones = {
-    default: "text-slate-100",
+    default: "text-ink",
     good: "text-emerald-400",
     warn: "text-amber-400",
     bad: "text-rose-400",
   };
   return (
-    <div className="rounded-lg bg-slate-800/50 px-3 py-2">
-      <p className="text-xs text-slate-500">{label}</p>
+    <div className="rounded-lg bg-surface-2/50 px-3 py-2">
+      <p className="text-xs text-muted">{label}</p>
       <p className={`text-xl font-semibold tabular-nums ${tones[tone]}`}>{value}</p>
     </div>
   );
@@ -68,7 +68,7 @@ export function ProgressBar({ pct }) {
   const color =
     pct >= 95 ? "bg-emerald-500" : pct >= 85 ? "bg-amber-500" : "bg-rose-500";
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
+    <div className="h-2 w-full overflow-hidden rounded-full bg-surface-2">
       <div className={`h-full ${color}`} style={{ width: `${pct}%` }} />
     </div>
   );

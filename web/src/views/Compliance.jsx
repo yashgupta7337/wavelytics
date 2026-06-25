@@ -19,8 +19,8 @@ export default function Compliance({ data }) {
           {c.byArea.map((a) => (
             <div key={a.area}>
               <div className="mb-1 flex items-center justify-between text-sm">
-                <span className="text-slate-300">{a.area}</span>
-                <span className="tabular-nums text-slate-400">{a.pct}%</span>
+                <span className="text-muted">{a.area}</span>
+                <span className="tabular-nums text-muted">{a.pct}%</span>
               </div>
               <ProgressBar pct={a.pct} />
             </div>

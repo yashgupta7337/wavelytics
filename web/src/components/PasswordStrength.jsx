@@ -24,7 +24,7 @@ export default function PasswordStrength({ password }) {
             <span
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-colors ${
-                i < Math.max(score, 1) && score > 0 ? BAR_COLORS[score] : "bg-slate-700"
+                i < Math.max(score, 1) && score > 0 ? BAR_COLORS[score] : "bg-surface-2"
               }`}
             />
           ))}
@@ -38,7 +38,7 @@ export default function PasswordStrength({ password }) {
             <li
               key={r.key}
               className={`flex items-center gap-1.5 text-[11px] transition-colors ${
-                ok ? "text-emerald-400" : "text-slate-500"
+                ok ? "text-emerald-400" : "text-muted"
               }`}
             >
               <span>{ok ? "✓" : "○"}</span>

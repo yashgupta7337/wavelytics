@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLiveData } from "./useLiveData.js";
 import { useAuth } from "./useAuth.js";
 import AuthScreen from "./components/AuthScreen.jsx";
+import ThemeToggle from "./components/ThemeToggle.jsx";
 import UploadPanel from "./components/UploadPanel.jsx";
 import Executive from "./views/Executive.jsx";
 import Operational from "./views/Operational.jsx";
@@ -47,7 +48,7 @@ export default function App() {
   // Full-page auth screen (only when configured, signed out, and requested).
   if (authEnabled && authView && !ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm text-slate-500">
+      <div className="flex min-h-screen items-center justify-center bg-bg text-sm text-muted">
         Loading…
       </div>
     );
@@ -64,13 +65,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-slate-800 bg-slate-900/40 backdrop-blur">
+      <header className="border-b border-line bg-surface/40 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <a href="/" className="block">
-            <h1 className="text-lg font-bold text-slate-100">Wavelytics</h1>
-            <p className="text-xs text-slate-500">Operations &amp; Compliance Intelligence</p>
+            <h1 className="text-lg font-bold text-ink">Wavelytics</h1>
+            <p className="text-xs text-muted">Operations &amp; Compliance Intelligence</p>
           </a>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
             <span className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -78,6 +79,7 @@ export default function App() {
               </span>
               LIVE · updated {updated}
             </span>
+            <ThemeToggle className="h-7 w-7" />
             {!ownData && (
               <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-semibold text-amber-300">
                 DEMO
@@ -91,15 +93,15 @@ export default function App() {
                 >
                   Upload CSV
                 </button>
-                <span className="hidden text-slate-500 sm:inline">{user.email}</span>
-                <button onClick={signOut} className="text-slate-400 hover:text-slate-200">
+                <span className="hidden text-muted sm:inline">{user.email}</span>
+                <button onClick={signOut} className="text-muted hover:text-ink">
                   Sign out
                 </button>
               </>
             ) : authEnabled ? (
               <button
                 onClick={() => setAuthView("signin")}
-                className="rounded-lg border border-slate-700 px-3 py-1.5 font-semibold text-slate-200 hover:border-sky-500 hover:text-sky-300"
+                className="rounded-lg border border-line px-3 py-1.5 font-semibold text-ink hover:border-sky-500 hover:text-sky-300"
               >
                 Sign in
               </button>
@@ -112,7 +114,7 @@ export default function App() {
         className={`border-b text-xs ${
           ownData
             ? "border-emerald-900/50 bg-emerald-500/10 text-emerald-300"
-            : "border-slate-800 bg-slate-900/20 text-slate-400"
+            : "border-line bg-surface/20 text-muted"
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 py-1.5">
@@ -139,7 +141,7 @@ export default function App() {
         </div>
       </div>
 
-      <nav className="border-b border-slate-800 bg-slate-900/20">
+      <nav className="border-b border-line bg-surface/20">
         <div className="mx-auto flex max-w-7xl gap-1 px-4">
           {TABS.map((t) => (
             <button
@@ -148,7 +150,7 @@ export default function App() {
               className={`border-b-2 px-4 py-3 text-sm font-medium transition ${
                 active === t.id
                   ? "border-sky-400 text-sky-300"
-                  : "border-transparent text-slate-400 hover:text-slate-200"
+                  : "border-transparent text-muted hover:text-ink"
               }`}
             >
               {t.label}
@@ -161,7 +163,7 @@ export default function App() {
         <Component data={data} />
       </main>
 
-      <footer className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-slate-600">
+      <footer className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-faint">
         © 2026 Wavelytics · a product by WaveConnect
       </footer>
 

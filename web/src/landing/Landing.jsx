@@ -1,4 +1,5 @@
 import GradientText from "../components/GradientText.jsx";
+import ThemeToggle from "../components/ThemeToggle.jsx";
 import Reveal from "./Reveal.jsx";
 
 // Wavelytics marketing landing page — the public front door at "/".
@@ -39,7 +40,7 @@ function SecondaryCta({ href = "#how-it-works", children, className = "" }) {
   return (
     <a
       href={href}
-      className={`inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-900/60 px-5 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:text-white ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-surface/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-line hover:text-ink ${className}`}
     >
       {children}
     </a>
@@ -49,7 +50,7 @@ function SecondaryCta({ href = "#how-it-works", children, className = "" }) {
 function Card({ children, className = "" }) {
   return (
     <div
-      className={`rounded-xl border border-slate-800 bg-slate-900/60 p-5 shadow-sm ${className}`}
+      className={`rounded-xl border border-line bg-surface/60 p-5 shadow-sm ${className}`}
     >
       {children}
     </div>
@@ -144,35 +145,36 @@ const icons = {
 
 function Nav() {
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-line bg-bg/80 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <a href="#top" className="flex items-baseline gap-2">
-          <span className="text-lg font-bold tracking-tight text-slate-100">
+          <span className="text-lg font-bold tracking-tight text-ink">
             Wavelytics
           </span>
-          <span className="hidden text-xs text-slate-500 sm:inline">
+          <span className="hidden text-xs text-muted sm:inline">
             a product by WaveConnect
           </span>
         </a>
-        <nav className="hidden items-center gap-6 text-sm text-slate-400 md:flex">
-          <a className="transition hover:text-slate-100" href="#views">
+        <nav className="hidden items-center gap-6 text-sm text-muted md:flex">
+          <a className="transition hover:text-ink" href="#views">
             Platform
           </a>
-          <a className="transition hover:text-slate-100" href="#segments">
+          <a className="transition hover:text-ink" href="#segments">
             Who it&apos;s for
           </a>
-          <a className="transition hover:text-slate-100" href="#how-it-works">
+          <a className="transition hover:text-ink" href="#how-it-works">
             How it works
           </a>
-          <a className="transition hover:text-slate-100" href="#trust">
+          <a className="transition hover:text-ink" href="#trust">
             Security
           </a>
-          <a className="transition hover:text-slate-100" href="#about">
+          <a className="transition hover:text-ink" href="#about">
             About
           </a>
         </nav>
         <div className="flex items-center gap-2">
-          <SecondaryCta href={SIGNIN_URL} className="px-4 py-2">
+          <ThemeToggle />
+          <SecondaryCta href={SIGNIN_URL} className="hidden px-4 py-2 sm:inline-flex">
             Sign in
           </SecondaryCta>
           <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
@@ -194,17 +196,17 @@ function Hero() {
       />
       <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1 text-xs text-slate-400">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-3 py-1 text-xs text-muted">
             <LiveDot />
             Live operational, risk &amp; compliance intelligence
           </div>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight text-slate-100 sm:text-5xl">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">
             One pane of glass for{" "}
             <GradientText>operational health</GradientText>,{" "}
             <GradientText>risk</GradientText> &amp;{" "}
             <GradientText>compliance</GradientText>.
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-slate-400">
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-muted">
             Wavelytics is the operations &amp; compliance intelligence platform
             that helps regulated, ops-heavy teams see service performance, risk,
             and audit readiness live — and turn fragmented spreadsheets into
@@ -214,7 +216,7 @@ function Hero() {
             <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
             <SecondaryCta href={APP_URL}>Launch the live demo →</SecondaryCta>
           </div>
-          <p className="mt-4 text-xs text-slate-600">
+          <p className="mt-4 text-xs text-faint">
             CSV upload or n8n push · per-tenant separation · audit-ready exports
           </p>
         </div>
@@ -224,11 +226,11 @@ function Hero() {
           <Card className="p-4">
             <div className="mb-3 flex items-center justify-between">
               <div className="flex gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-slate-700" />
-                <span className="h-2.5 w-2.5 rounded-full bg-slate-700" />
-                <span className="h-2.5 w-2.5 rounded-full bg-slate-700" />
+                <span className="h-2.5 w-2.5 rounded-full bg-surface-2" />
+                <span className="h-2.5 w-2.5 rounded-full bg-surface-2" />
+                <span className="h-2.5 w-2.5 rounded-full bg-surface-2" />
               </div>
-              <span className="flex items-center gap-2 text-xs text-slate-400">
+              <span className="flex items-center gap-2 text-xs text-muted">
                 <LiveDot /> LIVE · updated just now
               </span>
             </div>
@@ -241,15 +243,15 @@ function Hero() {
               ].map((k) => (
                 <div
                   key={k.label}
-                  className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-left"
+                  className="rounded-lg border border-line bg-surface/60 p-3 text-left"
                 >
-                  <p className="text-[10px] uppercase tracking-wide text-slate-500">
+                  <p className="text-[10px] uppercase tracking-wide text-muted">
                     {k.label}
                   </p>
                   <p className={`mt-1 text-2xl font-bold tabular-nums ${k.tone}`}>
                     {k.value}
                     {k.unit && (
-                      <span className="ml-0.5 text-sm font-medium text-slate-400">
+                      <span className="ml-0.5 text-sm font-medium text-muted">
                         {k.unit}
                       </span>
                     )}
@@ -258,7 +260,7 @@ function Hero() {
               ))}
             </div>
             {/* simple sparkline */}
-            <div className="mt-3 rounded-lg border border-slate-800 bg-slate-900/40 p-3">
+            <div className="mt-3 rounded-lg border border-line bg-surface/40 p-3">
               <svg viewBox="0 0 600 80" className="h-20 w-full" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
@@ -318,14 +320,14 @@ const VIEWS = [
 
 function Views() {
   return (
-    <section id="views" className="border-t border-slate-800 bg-slate-950">
+    <section id="views" className="border-t border-line bg-bg">
       <div className="mx-auto max-w-7xl px-4 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <Badge sev="low">Single pane of glass</Badge>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-100">
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-ink">
             Four views. <GradientText>One source of truth.</GradientText>
           </h2>
-          <p className="mt-3 text-slate-400">
+          <p className="mt-3 text-muted">
             Wavelytics unifies the four domains it grew out of — Data &amp;
             Analytics, Automated Screening, Collateral Monitoring, and
             Compliance/Regulatory Data Management — into role-built dashboards.
@@ -335,14 +337,14 @@ function Views() {
           {VIEWS.map((v) => (
             <Card key={v.key} className="flex flex-col">
               <div className="mb-3 flex items-center justify-between">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-800 bg-slate-800/40 text-sky-400">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-surface-2/40 text-sky-400">
                   <Icon path={icons[v.key]} />
                 </span>
                 <Badge sev={v.sev}>{v.name}</Badge>
               </div>
-              <h3 className="text-base font-semibold text-slate-100">{v.name}</h3>
-              <p className="mt-2 flex-1 text-sm text-slate-400">{v.desc}</p>
-              <ul className="mt-4 space-y-1.5 border-t border-slate-800 pt-4 text-xs text-slate-400">
+              <h3 className="text-base font-semibold text-ink">{v.name}</h3>
+              <p className="mt-2 flex-1 text-sm text-muted">{v.desc}</p>
+              <ul className="mt-4 space-y-1.5 border-t border-line pt-4 text-xs text-muted">
                 {v.metrics.map((m) => (
                   <li key={m} className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" />
@@ -368,14 +370,14 @@ const SEGMENTS = [
 
 function Segments() {
   return (
-    <section id="segments" className="border-t border-slate-800">
+    <section id="segments" className="border-t border-line">
       <div className="mx-auto max-w-7xl px-4 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <Badge sev="med">Built for regulated, ops-heavy teams</Badge>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-100">
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-ink">
             Made for teams where <GradientText>mistakes are expensive</GradientText>
           </h2>
-          <p className="mt-3 text-slate-400">
+          <p className="mt-3 text-muted">
             If your operation is audited, regulated, and measured on SLAs,
             Wavelytics speaks your language out of the box.
           </p>
@@ -383,8 +385,8 @@ function Segments() {
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {SEGMENTS.map((s) => (
             <Card key={s.name}>
-              <h3 className="text-sm font-semibold text-slate-100">{s.name}</h3>
-              <p className="mt-2 text-xs text-slate-400">{s.note}</p>
+              <h3 className="text-sm font-semibold text-ink">{s.name}</h3>
+              <p className="mt-2 text-xs text-muted">{s.note}</p>
             </Card>
           ))}
         </div>
@@ -413,27 +415,27 @@ const STEPS = [
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="border-t border-slate-800 bg-slate-950">
+    <section id="how-it-works" className="border-t border-line bg-bg">
       <div className="mx-auto max-w-7xl px-4 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <Badge sev="low">How it works</Badge>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-100">
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-ink">
             <GradientText>Live in days, not quarters</GradientText>
           </h2>
         </div>
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {STEPS.map((s, i) => (
             <Card key={s.title} className="relative">
-              <span className="absolute right-4 top-4 text-4xl font-bold text-slate-800">
+              <span className="absolute right-4 top-4 text-4xl font-bold text-line">
                 {i + 1}
               </span>
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-800 bg-slate-800/40 text-sky-400">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-surface-2/40 text-sky-400">
                 <Icon path={icons[s.icon]} />
               </span>
-              <h3 className="mt-4 text-base font-semibold text-slate-100">
+              <h3 className="mt-4 text-base font-semibold text-ink">
                 {s.title}
               </h3>
-              <p className="mt-2 text-sm text-slate-400">{s.desc}</p>
+              <p className="mt-2 text-sm text-muted">{s.desc}</p>
             </Card>
           ))}
         </div>
@@ -450,17 +452,17 @@ const TRUST = [
 
 function Trust() {
   return (
-    <section id="trust" className="border-t border-slate-800">
+    <section id="trust" className="border-t border-line">
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="grid gap-5 md:grid-cols-3">
           {TRUST.map((t) => (
             <div key={t.title} className="flex items-start gap-4">
-              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-800 bg-slate-900/60 text-emerald-400">
+              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-line bg-surface/60 text-emerald-400">
                 <Icon path={icons[t.icon]} />
               </span>
               <div>
-                <h3 className="text-sm font-semibold text-slate-100">{t.title}</h3>
-                <p className="mt-1 text-sm text-slate-400">{t.desc}</p>
+                <h3 className="text-sm font-semibold text-ink">{t.title}</h3>
+                <p className="mt-1 text-sm text-muted">{t.desc}</p>
               </div>
             </div>
           ))}
@@ -539,17 +541,17 @@ const VALUES = [
 
 function About() {
   return (
-    <section id="about" className="border-t border-slate-800 bg-slate-950">
+    <section id="about" className="border-t border-line bg-bg">
       <div className="mx-auto max-w-7xl px-4 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <Badge sev="low">IT Products &amp; Solutions</Badge>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-100">
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-ink">
             Engineering-grade software, from a{" "}
             <GradientText>deep-tech company</GradientText>
           </h2>
-          <p className="mt-3 text-slate-400">
+          <p className="mt-3 text-muted">
             Wavelytics is built by{" "}
-            <span className="font-semibold text-slate-200">WaveConnect</span> — an
+            <span className="font-semibold text-ink">WaveConnect</span> — an
             engineering-led technology company with a track record of delivering
             mission-critical, high-reliability systems. Wavelytics is our flagship IT
             product: that same engineering rigor, brought to data, AI, and cloud software
@@ -565,9 +567,9 @@ function About() {
               >
                 {m.initials}
               </span>
-              <h3 className="mt-4 text-base font-semibold text-slate-100">{m.name}</h3>
+              <h3 className="mt-4 text-base font-semibold text-ink">{m.name}</h3>
               <p className="text-xs font-medium text-sky-400">{m.role}</p>
-              <p className="mt-2 text-sm text-slate-400">{m.bio}</p>
+              <p className="mt-2 text-sm text-muted">{m.bio}</p>
             </Card>
           ))}
         </div>
@@ -575,19 +577,19 @@ function About() {
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {VALUES.map((v) => (
             <Card key={v.t}>
-              <h3 className="text-sm font-semibold text-slate-100">{v.t}</h3>
-              <p className="mt-2 text-xs text-slate-400">{v.d}</p>
+              <h3 className="text-sm font-semibold text-ink">{v.t}</h3>
+              <p className="mt-2 text-xs text-muted">{v.d}</p>
             </Card>
           ))}
         </div>
 
-        <p className="mt-10 text-center text-xs text-slate-600">
+        <p className="mt-10 text-center text-xs text-faint">
           Part of{" "}
           <a
             href="https://waveconnect.net.in"
             target="_blank"
             rel="noreferrer"
-            className="text-slate-400 underline-offset-2 hover:text-slate-200 hover:underline"
+            className="text-muted underline-offset-2 hover:text-ink hover:underline"
           >
             WaveConnect Communications Pvt. Ltd.
           </a>{" "}
@@ -600,13 +602,13 @@ function About() {
 
 function CtaBand() {
   return (
-    <section className="border-t border-slate-800 bg-slate-950">
+    <section className="border-t border-line bg-bg">
       <div className="mx-auto max-w-7xl px-4 py-16">
-        <Card className="flex flex-col items-center gap-5 bg-gradient-to-b from-slate-900/80 to-slate-900/40 p-8 text-center sm:p-12">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-100 sm:text-3xl">
+        <Card className="flex flex-col items-center gap-5 bg-gradient-to-b from-surface/80 to-surface/40 p-8 text-center sm:p-12">
+          <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
             See your own operations, risk &amp; compliance — <GradientText>live.</GradientText>
           </h2>
-          <p className="max-w-xl text-slate-400">
+          <p className="max-w-xl text-muted">
             Bring a CSV export to a 30-minute call and watch your real numbers
             light up across all four views.
           </p>
@@ -616,7 +618,7 @@ function CtaBand() {
           </div>
           <a
             href={DEMO_MAILTO}
-            className="text-xs text-slate-500 transition hover:text-slate-300"
+            className="text-xs text-muted transition hover:text-muted"
           >
             Prefer a guided walkthrough? Email us
           </a>
@@ -628,10 +630,10 @@ function CtaBand() {
 
 function Footer() {
   return (
-    <footer className="border-t border-slate-800">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-8 text-xs text-slate-600 sm:flex-row">
+    <footer className="border-t border-line">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-8 text-xs text-faint sm:flex-row">
         <div className="flex items-baseline gap-2">
-          <span className="font-semibold text-slate-400">Wavelytics</span>
+          <span className="font-semibold text-muted">Wavelytics</span>
           <span>Operations &amp; Compliance Intelligence</span>
         </div>
         <p>© 2026 Wavelytics · a product by WaveConnect</p>
@@ -642,7 +644,7 @@ function Footer() {
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-bg text-ink">
       <Nav />
       <main>
         <Hero />

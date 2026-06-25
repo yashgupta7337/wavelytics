@@ -39,14 +39,14 @@ export default function UploadPanel({ token, onClose, onUploaded }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg/70 p-4 backdrop-blur">
+      <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-slate-100">Upload metrics (CSV)</h2>
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-300" aria-label="Close">✕</button>
+          <h2 className="text-base font-semibold text-ink">Upload metrics (CSV)</h2>
+          <button onClick={onClose} className="text-muted hover:text-muted" aria-label="Close">✕</button>
         </div>
-        <p className="mb-4 text-xs text-slate-500">
-          Upload a <code className="text-slate-400">metric,value</code> CSV to replace this
+        <p className="mb-4 text-xs text-muted">
+          Upload a <code className="text-muted">metric,value</code> CSV to replace this
           workspace's live numbers.{" "}
           <a href={`${API}/api/template.csv`} className="text-sky-400 hover:text-sky-300" download>
             Download the template
@@ -57,7 +57,7 @@ export default function UploadPanel({ token, onClose, onUploaded }) {
           <input
             type="file" accept=".csv,text/csv"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-800 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-slate-700"
+            className="block w-full text-sm text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-surface-2 file:px-3 file:py-2 file:text-sm file:text-ink hover:file:bg-surface-2"
           />
           {error && <p className="text-xs text-rose-400">{error}</p>}
           {result && (

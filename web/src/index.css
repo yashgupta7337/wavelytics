@@ -1,7 +1,40 @@
 @import "tailwindcss";
 
+/* Semantic theme tokens exposed to Tailwind v4 as utilities (bg-bg, bg-surface,
+   bg-surface-2, border-line, text-ink, text-muted, text-faint). They reference
+   the runtime CSS variables below, so flipping [data-theme] re-themes instantly. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+}
+
+/* Light theme (default). */
 :root {
+  color-scheme: light;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --line: #e2e8f0;
+  --ink: #0f172a;
+  --muted: #475569;
+  --faint: #94a3b8;
+}
+
+/* Dark theme — the original Wavelytics palette. */
+:root[data-theme="dark"] {
   color-scheme: dark;
+  --bg: #0b1120;
+  --surface: #0f172a;
+  --surface-2: #1e293b;
+  --line: #1e293b;
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
+  --faint: #64748b;
 }
 
 /* Smooth in-page navigation, offset for the sticky navbar. */
@@ -13,8 +46,17 @@ html {
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: #0b1120;
-  color: #e2e8f0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Animate only color-ish properties when the theme flips (transform/opacity
+   are left to their own transitions so aurora/reveal aren't affected). */
+*,
+::before,
+::after {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    fill 0.2s ease;
 }
 
 /* Animated moving-gradient text for impactful titles. */
@@ -25,7 +67,8 @@ body {
 }
 
 .gradient-text {
-  background-image: linear-gradient(90deg, #38bdf8, #22d3ee, #818cf8, #38bdf8);
+  /* Mid-tone stops so the text reads on both light and dark backgrounds. */
+  background-image: linear-gradient(90deg, #0ea5e9, #06b6d4, #6366f1, #0ea5e9);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;

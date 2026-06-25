@@ -8,6 +8,19 @@
       content="Wavelytics is the operations & compliance intelligence platform that gives regulated, ops-heavy teams a single pane of glass over service performance, operational health, risk, and audit readiness."
     />
     <title>Wavelytics — Operations &amp; Compliance Intelligence</title>
+    <script>
+      // Set the theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var t = localStorage.getItem("wavelytics-theme");
+          if (!t)
+            t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

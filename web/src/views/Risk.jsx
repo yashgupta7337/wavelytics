@@ -43,8 +43,8 @@ export default function Risk({ data }) {
       <Card title="Early-Warning Alerts">
         <ul className="space-y-2">
           {risk.alerts.map((a, i) => (
-            <li key={i} className="flex items-center justify-between rounded-lg bg-slate-800/50 px-3 py-2">
-              <span className="text-sm text-slate-300">{a.msg}</span>
+            <li key={i} className="flex items-center justify-between rounded-lg bg-surface-2/50 px-3 py-2">
+              <span className="text-sm text-muted">{a.msg}</span>
               <Badge sev={a.sev}>{a.sev.toUpperCase()}</Badge>
             </li>
           ))}

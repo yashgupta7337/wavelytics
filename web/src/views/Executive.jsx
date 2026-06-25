@@ -17,7 +17,7 @@ export default function Executive({ data }) {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Card>
-          <p className="text-xs uppercase tracking-wide text-slate-500">Overall Health</p>
+          <p className="text-xs uppercase tracking-wide text-muted">Overall Health</p>
           <div className="mt-2">
             <Badge sev={healthy ? "good" : "med"}>{executive.health}</Badge>
           </div>
