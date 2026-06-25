@@ -1,0 +1,45 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run build)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run seed)",
+      "Bash(npm start)",
+      "Bash(node:*)",
+      "Bash(curl:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git add:*)",
+      "Bash(git restore:*)",
+      "Bash(git rm:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git config user.email:*)",
+      "Bash(git config user.name:*)"
+    ]
+  }
+}
