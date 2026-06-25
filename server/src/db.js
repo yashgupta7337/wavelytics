@@ -12,7 +12,15 @@ let pool;
 
 export const db = {
   async init() {
-    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const connectionString = process.env.DATABASE_URL;
+    // Managed Postgres (Supabase, Neon, Render, etc.) requires SSL; local dev
+    // does not. Enable SSL for non-local hosts. rejectUnauthorized:false avoids
+    // CA-bundle issues with provider certs (set DATABASE_SSL=strict to enforce).
+    const isLocal = /@(localhost|127\.0\.0\.1|\[::1\])/.test(connectionString || "");
+    const ssl = isLocal
+      ? false
+      : { rejectUnauthorized: process.env.DATABASE_SSL === "strict" };
+    pool = new Pool({ connectionString, ssl });
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS tenants (
