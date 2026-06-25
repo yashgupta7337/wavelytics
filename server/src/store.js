@@ -41,8 +41,29 @@ export async function initStore() {
   }, TICK_MS);
 }
 
+// The public/demo snapshot (simulated feed). Served to anonymous callers.
 export function getSnapshot() {
   return current;
+}
+
+// A tenant's own snapshot from their latest upload. Falls back to the demo
+// feed until they've uploaded anything, so a new pilot account is never blank.
+export async function getTenantSnapshot(tenantId) {
+  if (!usingDb || !tenantId) return current;
+  try {
+    const latest = await db.loadLatest(tenantId);
+    return latest ?? current;
+  } catch (err) {
+    console.warn("[store] tenant snapshot load failed:", err.message);
+    return current;
+  }
+}
+
+// Persist a tenant's uploaded snapshot and record the upload for the audit log.
+export async function saveTenantSnapshot(snapshot, { tenantId, uploadedBy, filename, rowCount }) {
+  if (!usingDb) throw new Error("database_required");
+  await db.persist(snapshot, tenantId);
+  await db.recordUpload({ tenantId, uploadedBy, filename, rowCount });
 }
 
 export function isUsingDb() {
