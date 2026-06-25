@@ -480,8 +480,7 @@ const TEAM = [
     accent: "from-sky-500 to-indigo-500",
     bio: (
       <>
-        Founder-operator and the driving builder of the business, with roots in
-        telecom infrastructure. He also runs{" "}
+        Building{" "}
         <a
           href="https://waveconnect.net.in"
           target="_blank"
@@ -490,35 +489,37 @@ const TEAM = [
         >
           WaveConnect
         </a>{" "}
-        Communication Pvt. Ltd. — a telecom business delivering services and
-        expertise pan-India alongside premium OEMs.
+        from the ground up — a telecom business delivering services and expertise
+        pan-India alongside premium OEMs, with a track record of excellence and
+        quality. Wavelytics is the next layer: the intelligence platform the group
+        needed and couldn't find.
       </>
     ),
   },
   {
     name: "Yash Gupta",
-    role: "Engineering (Director)",
+    role: "Engineering",
     initials: "YG",
     accent: "from-cyan-500 to-sky-500",
     bio: (
       <>
-        Engineering leadership for the product — data and infrastructure. 2+ years
-        building and owning production data platforms end-to-end in lean health-tech
-        environments (2020–2024). B.Tech, Computer Science Engineering — Shiv Nadar
-        University, India.
+        Owned production data platforms solo for 2 years — cuts query time and
+        cloud bills. Now brings that infrastructure thinking directly to Wavelytics,
+        building the data backbone the platform runs on. B.Tech CSE, Shiv Nadar
+        University.
       </>
     ),
   },
   {
     name: "Dhruv Gupta",
-    role: "Product & Sales (Director)",
+    role: "Product & Sales",
     initials: "DG",
     accent: "from-indigo-500 to-violet-500",
     bio: (
       <>
-        Leads product thinking and go-to-market — turning customer problems into
-        roadmap and pipeline into pilots. B.Tech, Computer Science Engineering —
-        Shiv Nadar University, India.
+        Connects customer problems to roadmap and pipeline to pilots. The bridge
+        between what Wavelytics needs to be and who needs it most. B.Tech CSE, Shiv
+        Nadar University.
       </>
     ),
   },
