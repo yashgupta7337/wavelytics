@@ -122,22 +122,30 @@ uploaded metrics instead of the simulated feed. It uses the same Supabase projec
 1. In **Supabase → Authentication → Providers**, ensure **Email** is enabled.
    For fast pilots, turn **"Confirm email" off** (Authentication → Providers →
    Email) so accounts work immediately; turn it back on for production.
-2. Grab two values from **Supabase → Project Settings → API**:
-   - **Project URL** and the **anon public** key (for the web app).
-   - The **JWT Secret** (for the API to verify tokens).
-3. In **Render → wavelytics-api → Environment**, add:
+2. In **Supabase → Authentication → URL Configuration**, set **Site URL** to your
+   web origin (e.g. `https://wavelytics.vercel.app`) and add it under **Redirect URLs**.
+3. Grab two values from **Supabase → Project Settings → API**: the **Project URL**
+   and the **anon public** key (the long `eyJ…` token).
+4. In **Render → wavelytics-api → Environment**, add:
    | Key | Value |
    |---|---|
-   | `SUPABASE_JWT_SECRET` | the Supabase **JWT Secret** |
-4. In **Vercel → Project → Settings → Environment Variables**, add:
+   | `SUPABASE_URL` | the Supabase **Project URL** (e.g. `https://xxxx.supabase.co`) |
+
+   The API verifies logins against the project's JWKS endpoint, which works with
+   the new asymmetric **JWT signing keys** (the current default). Only if your
+   project still uses the **legacy HS256 secret** do you also need
+   `SUPABASE_JWT_SECRET` (Supabase → JWT Keys) — `SUPABASE_URL` alone is enough
+   for new projects.
+5. In **Vercel → Project → Settings → Environment Variables**, add:
    | Key | Value |
    |---|---|
    | `VITE_SUPABASE_URL` | the Supabase **Project URL** |
    | `VITE_SUPABASE_ANON_KEY` | the **anon public** key |
    Then **redeploy** the Vercel project (env vars are build-time for Vite).
-5. Open the app → **Sign in** → create an account with a company email. Users
+6. Open the app → **Sign in** → create an account with a company email. Users
    who share an email domain (e.g. `@acme.com`) share one tenant workspace.
    Click **Upload CSV** (download the template first) to load real metrics.
+   `/api/health` should now report `"auth":"supabase"`.
 
 > Tenancy is by email domain: the first user on a domain provisions the tenant
 > and becomes its owner. A signed-in user with no upload yet sees the demo feed
@@ -151,7 +159,8 @@ uploaded metrics instead of the simulated feed. It uses the same Supabase projec
 |---|---|---|
 | Render (API) | `DATABASE_URL` | Postgres connection (full path only) |
 | Render (API) | `CORS_ORIGIN` | Allowed web origin(s); comma-separated |
-| Render (API) | `SUPABASE_JWT_SECRET` | Verify Supabase logins (enables uploads) |
+| Render (API) | `SUPABASE_URL` | Verify logins via JWKS (enables uploads) |
+| Render (API) | `SUPABASE_JWT_SECRET` | Legacy HS256 fallback (only if not on new signing keys) |
 | Render (API) | `PORT` | Set automatically by Render |
 | Vercel (Web) | `VITE_API_URL` | Base URL of the deployed API (build-time) |
 | Vercel (Web) | `VITE_SUPABASE_URL` | Supabase project URL (build-time) |

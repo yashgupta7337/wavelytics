@@ -53,8 +53,10 @@ Check the source: `curl http://localhost:4000/api/health`
 | `POST /api/upload`  | Upload a CSV of real metrics for the caller's tenant *(auth required)* |
 
 ## Logins, tenants & uploads (optional)
-Set `SUPABASE_JWT_SECRET` on the API and `VITE_SUPABASE_URL` /
-`VITE_SUPABASE_ANON_KEY` on the web build to enable **Supabase Auth**. Signed-in
+Set `SUPABASE_URL` on the API and `VITE_SUPABASE_URL` /
+`VITE_SUPABASE_ANON_KEY` on the web build to enable **Supabase Auth** (the API
+verifies tokens via the project's JWKS endpoint; `SUPABASE_JWT_SECRET` is an
+optional legacy-HS256 fallback). Signed-in
 users see **their own** uploaded metrics instead of the demo feed, with data
 isolated per tenant (grouped by email domain). Without these, the app runs as an
 open, simulated demo. See [`DEPLOY.md`](./DEPLOY.md) §5.
