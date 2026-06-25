@@ -1,0 +1,18 @@
+# Optional local Postgres for development.
+# Run:  docker compose up -d
+# Then: DATABASE_URL=postgres://wavelytics:wavelytics@localhost:5432/wavelytics
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wavelytics
+      POSTGRES_PASSWORD: wavelytics
+      POSTGRES_DB: wavelytics
+    ports:
+      - "5432:5432"
+    volumes:
+      - wavelytics_pgdata:/var/lib/postgresql/data
+
+volumes:
+  wavelytics_pgdata:
