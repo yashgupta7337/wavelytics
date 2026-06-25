@@ -5,3 +5,7 @@ dist
 .env
 .env.*
 !.env.example
+
+# Local-only product docs distilled from the WaveConnect/Envision reports.
+# Kept on disk for context; never committed.
+.wavelytics-local/
