@@ -72,7 +72,11 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
     setBusy(true);
     try {
       if (isSignup) {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/app/?verified=1` },
+        });
         if (error) throw error;
         if (data.session) {
           onAuthed?.(); // email confirmation off — signed in immediately

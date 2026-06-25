@@ -16,7 +16,16 @@ const SIGNUP_URL = "/app/?auth=signup";
 
 const CONTACT_EMAIL = "info@waveconnect.net.in";
 const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=Wavelytics%20enquiry`;
+const GMAIL_COMPOSE = `https://mail.google.com/mail/?view=cm&fs=1&to=${CONTACT_EMAIL}&su=Wavelytics%20enquiry`;
 const OFFICE_ADDRESS = "B-1, First Floor, Paschim Vihar, New Delhi - 110063, Delhi, India";
+
+// Open Gmail by default (web compose, which also deep-links the Gmail app on
+// mobile); fall back to the OS default mail client if the popup is blocked.
+function openEmail(e) {
+  if (e) e.preventDefault();
+  const win = window.open(GMAIL_COMPOSE, "_blank", "noopener,noreferrer");
+  if (!win) window.location.href = CONTACT_MAILTO;
+}
 
 const NAV_LINKS = [
   ["#views", "Platform"],
@@ -56,10 +65,11 @@ function LiveDot() {
   );
 }
 
-function PrimaryCta({ href = CONTACT_MAILTO, children, className = "" }) {
+function PrimaryCta({ href = CONTACT_MAILTO, children, className = "", onClick }) {
   return (
     <a
       href={href}
+      onClick={onClick}
       className={`inline-flex items-center justify-center gap-2 rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-sm transition hover:bg-sky-400 ${className}`}
     >
       {children}
@@ -67,11 +77,12 @@ function PrimaryCta({ href = CONTACT_MAILTO, children, className = "" }) {
   );
 }
 
-function SecondaryCta({ href = "#how-it-works", children, className = "" }) {
+function SecondaryCta({ href = "#how-it-works", children, className = "", onClick }) {
   return (
     <a
       href={href}
-      className={`inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-surface/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-line hover:text-ink ${className}`}
+      onClick={onClick}
+      className={`inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-surface/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-sky-500 hover:text-sky-300 ${className}`}
     >
       {children}
     </a>
@@ -673,7 +684,6 @@ function CtaBand() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
             <SecondaryCta href={APP_URL}>Launch the live demo →</SecondaryCta>
-            <SecondaryCta href={CONTACT_MAILTO}>Email us</SecondaryCta>
           </div>
         </Card>
       </div>
@@ -699,6 +709,7 @@ function Contact() {
             <h3 className="text-sm font-semibold text-ink">Email</h3>
             <a
               href={CONTACT_MAILTO}
+              onClick={openEmail}
               className="mt-1 block break-words text-sm text-sky-400 hover:underline"
             >
               {CONTACT_EMAIL}
@@ -710,7 +721,7 @@ function Contact() {
           </Card>
         </div>
         <div className="mt-6 text-center">
-          <PrimaryCta href={CONTACT_MAILTO}>Email us</PrimaryCta>
+          <PrimaryCta href={CONTACT_MAILTO} onClick={openEmail}>Email us</PrimaryCta>
         </div>
       </div>
     </section>
@@ -720,13 +731,23 @@ function Contact() {
 function Footer() {
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-8 text-center text-xs text-faint sm:flex-row sm:text-left">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-4 py-8 text-center text-xs text-faint">
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-2 font-medium text-muted transition hover:border-sky-500 hover:text-sky-300"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5" aria-hidden="true">
+            <path d="M12 19V5m-7 7 7-7 7 7" />
+          </svg>
+          Back to top
+        </button>
         <div className="flex items-center gap-2">
           <WaveMark className="h-4 w-4" />
           <span className="font-semibold text-muted">Wavelytics</span>
           <span>· a product by WaveConnect</span>
         </div>
-        <p>© 2026 Wavelytics · {OFFICE_ADDRESS}</p>
+        <p>© 2026 Wavelytics · part of WaveConnect Communications Pvt. Ltd.</p>
       </div>
     </footer>
   );

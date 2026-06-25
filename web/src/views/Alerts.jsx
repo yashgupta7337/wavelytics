@@ -19,7 +19,12 @@ export default function Alerts({ alerts, token }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "wavelytics-audit.csv";
+    // Unique filename per download.
+    const uuid =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    a.download = `${uuid}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
