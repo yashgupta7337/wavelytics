@@ -132,6 +132,59 @@ body {
   animation: aurora-drift 18s ease-in-out infinite;
 }
 
+/* Printable audit report: off-screen normally, revealed only when printing. */
+.audit-report {
+  position: absolute;
+  left: -99999px;
+  top: 0;
+  color: #000;
+  background: #fff;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .audit-report,
+  .audit-report * {
+    visibility: visible;
+  }
+  .audit-report {
+    left: 0;
+    width: 100%;
+    padding: 24px;
+  }
+  .audit-report h1 {
+    font-size: 18px;
+    margin: 0 0 4px;
+  }
+  .audit-report h2 {
+    font-size: 14px;
+    margin: 18px 0 6px;
+  }
+  .audit-report .audit-meta {
+    font-size: 12px;
+    margin: 2px 0;
+  }
+  .audit-report .audit-foot {
+    margin-top: 24px;
+    font-size: 11px;
+    color: #555;
+  }
+  .audit-report table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .audit-report th,
+  .audit-report td {
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: top;
+  }
+}
+
 /* Respect users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   .gradient-text,

@@ -8,8 +8,9 @@ import {
   CartesianGrid,
 } from "recharts";
 import { Card, KpiCard, Badge } from "../components/ui.jsx";
+import { toneFor } from "../useAlerts.js";
 
-export default function Executive({ data }) {
+export default function Executive({ data, status = {} }) {
   const { kpis, executive, trend } = data;
   const healthy = executive.health === "Healthy";
 
@@ -28,10 +29,12 @@ export default function Executive({ data }) {
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-        <KpiCard label="Reporting Accuracy" value={kpis.reportingAccuracy} unit="%" tone="good" />
-        <KpiCard label="Workflow Completion" value={kpis.workflowCompletion} unit="%" tone="good" />
+        <KpiCard label="Reporting Accuracy" value={kpis.reportingAccuracy} unit="%"
+          tone={toneFor(status, "reporting_accuracy", "good")} />
+        <KpiCard label="Workflow Completion" value={kpis.workflowCompletion} unit="%"
+          tone={toneFor(status, "workflow_completion", "good")} />
         <KpiCard label="Compliance Readiness" value={kpis.complianceReadiness} unit="%"
-          tone={kpis.complianceReadiness >= 90 ? "good" : "warn"} />
+          tone={toneFor(status, "compliance_readiness", "warn")} />
       </div>
 
       <Card title="Throughput Trend" subtitle="Processed vs. completed (live)">

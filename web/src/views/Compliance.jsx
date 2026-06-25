@@ -1,17 +1,19 @@
 import { Card, KpiCard, ProgressBar } from "../components/ui.jsx";
+import { toneFor } from "../useAlerts.js";
 
-export default function Compliance({ data }) {
+export default function Compliance({ data, status = {} }) {
   const { compliance: c } = data;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <KpiCard label="Audit Readiness" value={c.auditReadiness} unit="%"
-          tone={c.auditReadiness >= 90 ? "good" : "warn"} />
-        <KpiCard label="Pending Tasks" value={c.pendingTasks} tone="warn" />
+          tone={toneFor(status, "audit_readiness", "warn")} />
+        <KpiCard label="Pending Tasks" value={c.pendingTasks}
+          tone={toneFor(status, "pending_tasks", "warn")} />
         <KpiCard label="Completed Tasks" value={c.completedTasks.toLocaleString()} tone="good" />
         <KpiCard label="Expiring Docs" value={c.expiringDocs}
-          tone={c.expiringDocs > 5 ? "bad" : "warn"} />
+          tone={toneFor(status, "expiring_docs", "warn")} />
       </div>
 
       <Card title="Compliance Status by Area">

@@ -10,8 +10,9 @@ import {
 } from "recharts";
 import { Card, KpiCard, Badge } from "../components/ui.jsx";
 import { tooltipStyle } from "./Executive.jsx";
+import { toneFor } from "../useAlerts.js";
 
-export default function Risk({ data }) {
+export default function Risk({ data, status = {} }) {
   const { risk } = data;
   const totalHigh = risk.byCategory.reduce((s, c) => s + c.high, 0);
 
@@ -21,7 +22,7 @@ export default function Risk({ data }) {
         <KpiCard label="High Risks Open" value={totalHigh} tone={totalHigh > 6 ? "bad" : "warn"} />
         <KpiCard label="Collateral Value" value={`$${risk.collateralValueM}M`} />
         <KpiCard label="Overdue Valuations" value={risk.overdueValuations}
-          tone={risk.overdueValuations > 6 ? "bad" : "warn"} />
+          tone={toneFor(status, "overdue_valuations", "warn")} />
         <KpiCard label="Active Alerts" value={risk.alerts.length} tone="warn" />
       </div>
 

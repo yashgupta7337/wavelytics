@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
 import { useLiveData } from "./useLiveData.js";
+import { useAlerts } from "./useAlerts.js";
 import { useAuth } from "./useAuth.js";
 import AuthScreen from "./components/AuthScreen.jsx";
 import ThemeToggle from "./components/ThemeToggle.jsx";
 import UploadPanel from "./components/UploadPanel.jsx";
+import RulesPanel from "./components/RulesPanel.jsx";
+import AuditReport from "./components/AuditReport.jsx";
 import Executive from "./views/Executive.jsx";
 import Operational from "./views/Operational.jsx";
 import Risk from "./views/Risk.jsx";
 import Compliance from "./views/Compliance.jsx";
+import Alerts from "./views/Alerts.jsx";
 
 const TABS = [
   { id: "executive", label: "Executive", Component: Executive },
   { id: "operational", label: "Operational", Component: Operational },
   { id: "risk", label: "Risk", Component: Risk },
   { id: "compliance", label: "Compliance", Component: Compliance },
+  { id: "alerts", label: "Alerts", Component: Alerts },
 ];
 
 // Read ?auth=signin|signup from the URL (set by the landing page CTAs).
@@ -28,9 +33,11 @@ export default function App() {
   const { authEnabled, ready, user, token, signOut } = useAuth();
   const [authView, setAuthView] = useState(initialAuthView);
   const [showUpload, setShowUpload] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [refresh, setRefresh] = useState(0);
 
   const data = useLiveData(3000, token, refresh);
+  const alerts = useAlerts(token, refresh);
   const { Component } = TABS.find((t) => t.id === active);
   const updated = new Date(data.updatedAt).toLocaleTimeString();
   const ownData = data.source === "upload";
@@ -79,6 +86,20 @@ export default function App() {
               </span>
               LIVE · updated {updated}
             </span>
+            {(alerts.summary.red > 0 || alerts.summary.amber > 0) && (
+              <button
+                onClick={() => setActive("alerts")}
+                className={`rounded-full border px-2 py-0.5 font-semibold ${
+                  alerts.summary.red > 0
+                    ? "border-rose-500/30 bg-rose-500/10 text-rose-300"
+                    : "border-amber-500/30 bg-amber-500/10 text-amber-300"
+                }`}
+              >
+                {alerts.summary.red > 0
+                  ? `${alerts.summary.red} critical`
+                  : `${alerts.summary.amber} warning`}
+              </button>
+            )}
             <ThemeToggle className="h-7 w-7" />
             {!ownData && (
               <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-semibold text-amber-300">
@@ -87,6 +108,12 @@ export default function App() {
             )}
             {authEnabled && user ? (
               <>
+                <button
+                  onClick={() => setShowRules(true)}
+                  className="rounded-lg border border-line px-3 py-1.5 font-semibold text-ink hover:border-sky-500 hover:text-sky-300"
+                >
+                  Rules
+                </button>
                 <button
                   onClick={() => setShowUpload(true)}
                   className="rounded-lg bg-sky-500 px-3 py-1.5 font-semibold text-white hover:bg-sky-400"
@@ -160,7 +187,7 @@ export default function App() {
       </nav>
 
       <main className="mx-auto max-w-7xl px-4 py-6">
-        <Component data={data} />
+        <Component data={data} status={alerts.statusByMetric} alerts={alerts} token={token} />
       </main>
 
       <footer className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-faint">
@@ -174,6 +201,16 @@ export default function App() {
           onUploaded={() => setRefresh((n) => n + 1)}
         />
       )}
+      {showRules && (
+        <RulesPanel
+          token={token}
+          onClose={() => setShowRules(false)}
+          onSaved={() => setRefresh((n) => n + 1)}
+        />
+      )}
+
+      {/* Off-screen; revealed only when printing (Alerts → Print / Save as PDF). */}
+      <AuditReport alerts={alerts} user={user} />
     </div>
   );
 }
