@@ -318,20 +318,13 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
               {signinFailed && (
                 <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
                   That email and password don't match.
-                  <div className="mt-2 flex flex-wrap gap-4">
+                  <div className="mt-2">
                     <button
                       type="button"
                       onClick={() => switchMode("signup")}
                       className="font-semibold text-sky-300 underline-offset-2 hover:underline"
                     >
                       Create an account →
-                    </button>
-                    <button
-                      type="button"
-                      onClick={forgotPassword}
-                      className="font-semibold text-sky-300 underline-offset-2 hover:underline"
-                    >
-                      Forgot password?
                     </button>
                   </div>
                 </div>
@@ -348,11 +341,11 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
                 {busy ? "Please wait…" : isSignup ? "Create account" : "Sign in"}
               </button>
 
-              {!isSignup && !signinFailed && (
+              {!isSignup && (
                 <button
                   type="button"
                   onClick={forgotPassword}
-                  className="w-full text-center text-xs text-muted transition hover:text-muted"
+                  className="w-full text-center text-xs text-faint transition hover:text-ink"
                 >
                   Forgot password?
                 </button>
