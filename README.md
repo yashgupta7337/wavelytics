@@ -46,8 +46,18 @@ Check the source: `curl http://localhost:4000/api/health`
 ## API
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/snapshot` | Current live metrics for all four views |
-| `GET /api/health`   | Service status and data source (postgres / simulated) |
+| `GET /api/snapshot` | Current live metrics for all four views. Authenticated → the caller's tenant data; anonymous → the simulated demo feed |
+| `GET /api/health`   | Service status, data source (postgres / simulated), and auth mode |
+| `GET /api/me`       | Current user and resolved tenant *(auth required)* |
+| `GET /api/template.csv` | Sample CSV showing the exact `metric,value` upload format |
+| `POST /api/upload`  | Upload a CSV of real metrics for the caller's tenant *(auth required)* |
+
+## Logins, tenants & uploads (optional)
+Set `SUPABASE_JWT_SECRET` on the API and `VITE_SUPABASE_URL` /
+`VITE_SUPABASE_ANON_KEY` on the web build to enable **Supabase Auth**. Signed-in
+users see **their own** uploaded metrics instead of the demo feed, with data
+isolated per tenant (grouped by email domain). Without these, the app runs as an
+open, simulated demo. See [`DEPLOY.md`](./DEPLOY.md) §5.
 
 ## Tech stack
 - **Frontend:** React 18, Vite, Recharts, Tailwind CSS v4

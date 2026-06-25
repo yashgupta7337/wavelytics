@@ -114,14 +114,48 @@ Fast path, or continue for real persisted data.
 
 ---
 
+## 5. (Optional) Enable logins + per-tenant CSV uploads
+
+This turns the demo into a sellable pilot: clients sign in and see **their own**
+uploaded metrics instead of the simulated feed. It uses the same Supabase project.
+
+1. In **Supabase → Authentication → Providers**, ensure **Email** is enabled.
+   For fast pilots, turn **"Confirm email" off** (Authentication → Providers →
+   Email) so accounts work immediately; turn it back on for production.
+2. Grab two values from **Supabase → Project Settings → API**:
+   - **Project URL** and the **anon public** key (for the web app).
+   - The **JWT Secret** (for the API to verify tokens).
+3. In **Render → wavelytics-api → Environment**, add:
+   | Key | Value |
+   |---|---|
+   | `SUPABASE_JWT_SECRET` | the Supabase **JWT Secret** |
+4. In **Vercel → Project → Settings → Environment Variables**, add:
+   | Key | Value |
+   |---|---|
+   | `VITE_SUPABASE_URL` | the Supabase **Project URL** |
+   | `VITE_SUPABASE_ANON_KEY` | the **anon public** key |
+   Then **redeploy** the Vercel project (env vars are build-time for Vite).
+5. Open the app → **Sign in** → create an account with a company email. Users
+   who share an email domain (e.g. `@acme.com`) share one tenant workspace.
+   Click **Upload CSV** (download the template first) to load real metrics.
+
+> Tenancy is by email domain: the first user on a domain provisions the tenant
+> and becomes its owner. A signed-in user with no upload yet sees the demo feed
+> until their first CSV lands.
+
+---
+
 ## Environment variables — quick reference
 
 | Where | Key | Purpose |
 |---|---|---|
 | Render (API) | `DATABASE_URL` | Postgres connection (full path only) |
 | Render (API) | `CORS_ORIGIN` | Allowed web origin(s); comma-separated |
+| Render (API) | `SUPABASE_JWT_SECRET` | Verify Supabase logins (enables uploads) |
 | Render (API) | `PORT` | Set automatically by Render |
 | Vercel (Web) | `VITE_API_URL` | Base URL of the deployed API (build-time) |
+| Vercel (Web) | `VITE_SUPABASE_URL` | Supabase project URL (build-time) |
+| Vercel (Web) | `VITE_SUPABASE_ANON_KEY` | Supabase anon public key (build-time) |
 
 ## Redeploys
 - **Web:** every push to the connected branch auto-deploys on Vercel.
