@@ -11,6 +11,13 @@ import {
 import { db } from "./db.js";
 import { optionalAuth, requireAuth, authConfigured } from "./auth.js";
 import { parseCsv, buildSnapshot, TEMPLATE_CSV } from "./csv.js";
+import {
+  evaluate,
+  summarize,
+  statusByMetric,
+  defaultRules,
+  METRIC_ACCESSORS,
+} from "./rules.js";
 
 const app = express();
 
@@ -107,9 +114,141 @@ app.post("/api/upload", requireAuth, async (req, res) => {
       filename: req.query.filename || "upload.csv",
       rowCount: rows.length,
     });
-    res.json({ ok: true, applied, rows: rows.length, snapshot });
+
+    // Evaluate the new snapshot against the tenant's rules and record any
+    // breaches — this is what builds the audit trail (and where Slack/email
+    // dispatch will hook in later; see future-feature-additions.md).
+    const rules = await db.getRules(tenantId);
+    const breaches = evaluate(snapshot, rules).filter((r) => r.status !== "green");
+    if (breaches.length) await db.recordAlertEvents(tenantId, breaches);
+
+    res.json({ ok: true, applied, rows: rows.length, alerts: breaches.length, snapshot });
   } catch (err) {
     console.error("[api] /api/upload failed:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// ---- Rules engine: thresholds, alerts, audit export -----------------------
+
+// A tenant's threshold rules (seeded defaults until they save their own).
+app.get("/api/rules", requireAuth, async (req, res) => {
+  if (!isUsingDb()) return res.json({ rules: defaultRules() });
+  try {
+    const tenantId = await db.resolveTenant(req.user);
+    res.json({ rules: await db.getRules(tenantId) });
+  } catch (err) {
+    console.error("[api] /api/rules GET failed:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Update a tenant's rules.
+app.put("/api/rules", requireAuth, async (req, res) => {
+  if (!isUsingDb()) {
+    return res.status(503).json({ error: "database_required" });
+  }
+  const incoming = Array.isArray(req.body) ? req.body : req.body?.rules;
+  if (!Array.isArray(incoming)) {
+    return res.status(400).json({ error: "invalid_body", message: "Expected { rules: [...] }." });
+  }
+  const clean = [];
+  for (const r of incoming) {
+    if (!METRIC_ACCESSORS[r.metric_key]) continue;
+    if (r.comparator !== "above" && r.comparator !== "below") continue;
+    const warn = Number(r.warn);
+    const crit = Number(r.crit);
+    if (Number.isNaN(warn) || Number.isNaN(crit)) continue;
+    clean.push({
+      metric_key: r.metric_key,
+      label: String(r.label || r.metric_key),
+      comparator: r.comparator,
+      warn,
+      crit,
+      unit: typeof r.unit === "string" ? r.unit : "",
+      enabled: r.enabled !== false,
+    });
+  }
+  if (!clean.length) {
+    return res.status(400).json({ error: "no_valid_rules" });
+  }
+  try {
+    const tenantId = await db.resolveTenant(req.user);
+    res.json({ rules: await db.saveRules(tenantId, clean) });
+  } catch (err) {
+    console.error("[api] /api/rules PUT failed:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// Current RAG status for every ruled metric + a summary + recent alert events.
+app.get("/api/alerts", optionalAuth, async (req, res) => {
+  try {
+    let snapshot = getSnapshot();
+    let rules = defaultRules();
+    let events = [];
+    if (req.user && isUsingDb()) {
+      const tenantId = await db.resolveTenant(req.user);
+      snapshot = await getTenantSnapshot(tenantId);
+      rules = await db.getRules(tenantId);
+      events = await db.getAlertEvents(tenantId, { limit: 50 });
+    }
+    const results = evaluate(snapshot, rules);
+    res.json({
+      results,
+      summary: summarize(results),
+      statusByMetric: statusByMetric(results),
+      events,
+      updatedAt: snapshot?.updatedAt,
+    });
+  } catch (err) {
+    console.warn("[api] /api/alerts failed:", err.message);
+    const results = evaluate(getSnapshot(), defaultRules());
+    res.json({ results, summary: summarize(results), statusByMetric: statusByMetric(results), events: [] });
+  }
+});
+
+// Audit export: a CSV of the current metric statuses + the breach history.
+app.get("/api/audit-export.csv", requireAuth, async (req, res) => {
+  if (!isUsingDb()) return res.status(503).json({ error: "database_required" });
+  try {
+    const tenantId = await db.resolveTenant(req.user);
+    const tenant = await db.getTenant(tenantId);
+    const snapshot = await getTenantSnapshot(tenantId);
+    const rules = await db.getRules(tenantId);
+    const results = evaluate(snapshot, rules);
+    const events = await db.getAlertEvents(tenantId, { limit: 500 });
+
+    const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const lines = [];
+    lines.push(`Wavelytics audit export`);
+    lines.push(`Tenant,${esc(tenant?.name || tenantId)}`);
+    lines.push(`Generated at,${esc(new Date().toISOString())}`);
+    lines.push(`Snapshot at,${esc(snapshot?.updatedAt || "")}`);
+    lines.push("");
+    lines.push("Metric,Value,Status,Threshold,Message");
+    for (const r of results) {
+      lines.push(
+        [r.label, r.value, r.status, r.threshold ?? "", r.message].map(esc).join(",")
+      );
+    }
+    lines.push("");
+    lines.push("Alert history (most recent first)");
+    lines.push("When,Metric,Status,Value,Threshold,Message");
+    for (const e of events) {
+      lines.push(
+        [e.created_at, e.label, e.status, e.value, e.threshold ?? "", e.message]
+          .map(esc)
+          .join(",")
+      );
+    }
+
+    res
+      .type("text/csv")
+      .set("Content-Disposition", `attachment; filename="wavelytics-audit.csv"`)
+      .send(lines.join("\n"));
+  } catch (err) {
+    console.error("[api] /api/audit-export.csv failed:", err.message);
     res.status(500).json({ error: "server_error" });
   }
 });

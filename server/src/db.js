@@ -6,6 +6,7 @@
 // client is a tenant; users are mapped to a tenant via tenant_members so they
 // only ever see their own data.
 import pg from "pg";
+import { defaultRules } from "./rules.js";
 
 const { Pool } = pg;
 let pool;
@@ -55,8 +56,37 @@ export const db = {
         captured_at TIMESTAMPTZ NOT NULL DEFAULT now()
       );
 
+      CREATE TABLE IF NOT EXISTS alert_rules (
+        id         BIGSERIAL PRIMARY KEY,
+        tenant_id  UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        metric_key TEXT NOT NULL,
+        label      TEXT NOT NULL,
+        comparator TEXT NOT NULL CHECK (comparator IN ('above', 'below')),
+        warn       NUMERIC NOT NULL,
+        crit       NUMERIC NOT NULL,
+        unit       TEXT NOT NULL DEFAULT '',
+        enabled    BOOLEAN NOT NULL DEFAULT true,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (tenant_id, metric_key)
+      );
+
+      CREATE TABLE IF NOT EXISTS alert_events (
+        id         BIGSERIAL PRIMARY KEY,
+        tenant_id  UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        metric_key TEXT NOT NULL,
+        label      TEXT NOT NULL,
+        status     TEXT NOT NULL,
+        value      NUMERIC,
+        threshold  NUMERIC,
+        message    TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      );
+
       CREATE INDEX IF NOT EXISTS idx_snapshots_tenant
         ON metrics_snapshots (tenant_id, id DESC);
+
+      CREATE INDEX IF NOT EXISTS idx_alert_events_tenant
+        ON alert_events (tenant_id, id DESC);
     `);
 
     // Backfill for databases created before multi-tenancy was added.
@@ -139,6 +169,68 @@ export const db = {
          VALUES ($1, $2, $3, $4)`,
       [tenantId, uploadedBy ?? null, filename ?? null, rowCount ?? 0]
     );
+  },
+
+  // ---- alert rules & events ------------------------------------------------
+
+  // A tenant's threshold rules. Returns the seeded defaults (not yet persisted)
+  // until the tenant saves their own via saveRules.
+  async getRules(tenantId) {
+    const { rows } = await pool.query(
+      `SELECT metric_key, label, comparator, warn::float8 AS warn, crit::float8 AS crit,
+              unit, enabled
+         FROM alert_rules WHERE tenant_id = $1 ORDER BY metric_key`,
+      [tenantId]
+    );
+    if (!rows.length) return defaultRules();
+    // Merge: keep the full metric set, overriding defaults with saved rows so a
+    // partial save never drops metrics.
+    const byKey = new Map(rows.map((r) => [r.metric_key, r]));
+    return defaultRules().map((d) => byKey.get(d.metric_key) || d);
+  },
+
+  async saveRules(tenantId, rules) {
+    for (const r of rules) {
+      await pool.query(
+        `INSERT INTO alert_rules (tenant_id, metric_key, label, comparator, warn, crit, unit, enabled, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())
+           ON CONFLICT (tenant_id, metric_key) DO UPDATE SET
+             label = EXCLUDED.label, comparator = EXCLUDED.comparator,
+             warn = EXCLUDED.warn, crit = EXCLUDED.crit, unit = EXCLUDED.unit,
+             enabled = EXCLUDED.enabled, updated_at = now()`,
+        [
+          tenantId,
+          r.metric_key,
+          r.label,
+          r.comparator,
+          r.warn,
+          r.crit,
+          r.unit ?? "",
+          r.enabled !== false,
+        ]
+      );
+    }
+    return this.getRules(tenantId);
+  },
+
+  async recordAlertEvents(tenantId, events) {
+    for (const e of events) {
+      await pool.query(
+        `INSERT INTO alert_events (tenant_id, metric_key, label, status, value, threshold, message)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [tenantId, e.metric_key, e.label, e.status, e.value, e.threshold, e.message]
+      );
+    }
+  },
+
+  async getAlertEvents(tenantId, { limit = 50 } = {}) {
+    const { rows } = await pool.query(
+      `SELECT metric_key, label, status, value::float8 AS value,
+              threshold::float8 AS threshold, message, created_at
+         FROM alert_events WHERE tenant_id = $1 ORDER BY id DESC LIMIT $2`,
+      [tenantId, limit]
+    );
+    return rows;
   },
 
   async close() {
