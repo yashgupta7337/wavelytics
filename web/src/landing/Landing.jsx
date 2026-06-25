@@ -1,7 +1,10 @@
-// Standalone Wavelytics marketing landing page.
-// Mounted via a separate Vite entry (landing.html) so it never touches the
-// dashboard React tree. Styling mirrors the dashboard: slate-900/950 surfaces,
-// sky-400 primary accent, emerald-400/500 for "live"/positive signals.
+// Wavelytics marketing landing page — the public front door at "/".
+// Mounted via its own Vite entry (index.html) so it never touches the dashboard
+// React tree. Styling mirrors the dashboard: slate-900/950 surfaces, sky-400
+// primary accent, emerald-400/500 for "live"/positive signals.
+
+// The live dashboard console (separate Vite entry, served at "/app/").
+const APP_URL = "/app/";
 
 const DEMO_MAILTO =
   "mailto:hello@wavelytics.app?subject=Wavelytics%20demo%20request&body=Hi%20Wavelytics%20team%2C%20we%27d%20like%20a%20demo.";
@@ -159,7 +162,12 @@ function Nav() {
             Security
           </a>
         </nav>
-        <PrimaryCta>Request a demo</PrimaryCta>
+        <div className="flex items-center gap-2">
+          <SecondaryCta href={APP_URL} className="px-4 py-2">
+            Launch app
+          </SecondaryCta>
+          <PrimaryCta>Request a demo</PrimaryCta>
+        </div>
       </div>
     </header>
   );
@@ -194,8 +202,8 @@ function Hero() {
             RAG-rated, audit-ready answers.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <PrimaryCta>Request a demo</PrimaryCta>
-            <SecondaryCta href="#views">See the platform</SecondaryCta>
+            <PrimaryCta href={APP_URL}>Launch the live demo →</PrimaryCta>
+            <SecondaryCta href={DEMO_MAILTO}>Request a demo</SecondaryCta>
           </div>
           <p className="mt-4 text-xs text-slate-600">
             CSV upload or n8n push · per-tenant separation · audit-ready exports

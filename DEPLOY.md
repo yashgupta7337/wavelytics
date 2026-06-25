@@ -72,8 +72,8 @@ Do the **Fast path** first to get a URL, then add the database when ready.
    | `VITE_API_URL` | the Render API URL from step 1 (e.g. `https://wavelytics-api.onrender.com`) — **no trailing slash** |
 4. Click **Deploy**. When it finishes, open the Vercel URL — the dashboard
    loads and the header shows **LIVE · updated …**.
-   - Dashboard → `https://<your-app>.vercel.app/`
-   - Landing page → `https://<your-app>.vercel.app/landing.html`
+   - Landing page → `https://<your-app>.vercel.app/`
+   - Dashboard console → `https://<your-app>.vercel.app/app/`
 
 ---
 

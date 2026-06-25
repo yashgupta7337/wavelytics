@@ -15,10 +15,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        // Dashboard app (default entry).
+        // Marketing landing page — the public front door at "/".
         main: resolve(__dirname, "index.html"),
-        // Standalone marketing landing page (separate entry, separate tree).
-        landing: resolve(__dirname, "landing.html"),
+        // Dashboard console — served at "/app/".
+        app: resolve(__dirname, "app/index.html"),
       },
     },
   },
