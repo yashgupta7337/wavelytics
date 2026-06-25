@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLiveData } from "./useLiveData.js";
 import { useAuth } from "./useAuth.js";
-import Login from "./components/Login.jsx";
+import AuthScreen from "./components/AuthScreen.jsx";
 import UploadPanel from "./components/UploadPanel.jsx";
 import Executive from "./views/Executive.jsx";
 import Operational from "./views/Operational.jsx";
@@ -15,10 +15,17 @@ const TABS = [
   { id: "compliance", label: "Compliance", Component: Compliance },
 ];
 
+// Read ?auth=signin|signup from the URL (set by the landing page CTAs).
+function initialAuthView() {
+  if (typeof window === "undefined") return null;
+  const v = new URLSearchParams(window.location.search).get("auth");
+  return v === "signin" || v === "signup" ? v : null;
+}
+
 export default function App() {
   const [active, setActive] = useState("executive");
-  const { authEnabled, user, token, signOut } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
+  const { authEnabled, ready, user, token, signOut } = useAuth();
+  const [authView, setAuthView] = useState(initialAuthView);
   const [showUpload, setShowUpload] = useState(false);
   const [refresh, setRefresh] = useState(0);
 
@@ -26,6 +33,34 @@ export default function App() {
   const { Component } = TABS.find((t) => t.id === active);
   const updated = new Date(data.updatedAt).toLocaleTimeString();
   const ownData = data.source === "upload";
+
+  // Once signed in, leave the auth screen and clean ?auth out of the URL.
+  useEffect(() => {
+    if (user && authView) {
+      setAuthView(null);
+      if (window.history?.replaceState) {
+        window.history.replaceState({}, "", window.location.pathname);
+      }
+    }
+  }, [user, authView]);
+
+  // Full-page auth screen (only when configured, signed out, and requested).
+  if (authEnabled && authView && !ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm text-slate-500">
+        Loading…
+      </div>
+    );
+  }
+  if (authEnabled && !user && authView) {
+    return (
+      <AuthScreen
+        initialMode={authView}
+        onAuthed={() => setAuthView(null)}
+        onSkip={() => setAuthView(null)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -43,6 +78,11 @@ export default function App() {
               </span>
               LIVE · updated {updated}
             </span>
+            {!ownData && (
+              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-semibold text-amber-300">
+                DEMO
+              </span>
+            )}
             {authEnabled && user ? (
               <>
                 <button
@@ -58,7 +98,7 @@ export default function App() {
               </>
             ) : authEnabled ? (
               <button
-                onClick={() => setShowLogin(true)}
+                onClick={() => setAuthView("signin")}
                 className="rounded-lg border border-slate-700 px-3 py-1.5 font-semibold text-slate-200 hover:border-sky-500 hover:text-sky-300"
               >
                 Sign in
@@ -72,15 +112,30 @@ export default function App() {
         className={`border-b text-xs ${
           ownData
             ? "border-emerald-900/50 bg-emerald-500/10 text-emerald-300"
-            : "border-slate-800 bg-slate-900/20 text-slate-500"
+            : "border-slate-800 bg-slate-900/20 text-slate-400"
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 py-1.5">
-          {ownData
-            ? "Showing your organization's uploaded data."
-            : authEnabled && user
-              ? "Showing demo data — upload a CSV to see your own metrics."
-              : "Showing simulated demo data."}
+          {ownData ? (
+            "Showing your organization's live data."
+          ) : authEnabled && user ? (
+            "Sample data — upload a CSV to see your own metrics."
+          ) : (
+            <>
+              Sample / concept data —{" "}
+              {authEnabled ? (
+                <button
+                  onClick={() => setAuthView("signin")}
+                  className="font-semibold text-sky-300 underline-offset-2 hover:text-sky-200 hover:underline"
+                >
+                  sign in
+                </button>
+              ) : (
+                "sign in"
+              )}{" "}
+              to load your organization's own metrics.
+            </>
+          )}
         </div>
       </div>
 
@@ -110,7 +165,6 @@ export default function App() {
         © 2026 Wavelytics · a WaveConnect company
       </footer>
 
-      {showLogin && <Login onClose={() => setShowLogin(false)} />}
       {showUpload && (
         <UploadPanel
           token={token}

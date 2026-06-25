@@ -4,7 +4,10 @@
 // primary accent, emerald-400/500 for "live"/positive signals.
 
 // The live dashboard console (separate Vite entry, served at "/app/").
+// The dashboard reads ?auth= to open the sign-in / create-account screen.
 const APP_URL = "/app/";
+const SIGNIN_URL = "/app/?auth=signin";
+const SIGNUP_URL = "/app/?auth=signup";
 
 const DEMO_MAILTO =
   "mailto:hello@wavelytics.app?subject=Wavelytics%20demo%20request&body=Hi%20Wavelytics%20team%2C%20we%27d%20like%20a%20demo.";
@@ -163,10 +166,10 @@ function Nav() {
           </a>
         </nav>
         <div className="flex items-center gap-2">
-          <SecondaryCta href={APP_URL} className="px-4 py-2">
-            Launch app
+          <SecondaryCta href={SIGNIN_URL} className="px-4 py-2">
+            Sign in
           </SecondaryCta>
-          <PrimaryCta>Request a demo</PrimaryCta>
+          <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
         </div>
       </div>
     </header>
@@ -202,8 +205,8 @@ function Hero() {
             RAG-rated, audit-ready answers.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <PrimaryCta href={APP_URL}>Launch the live demo →</PrimaryCta>
-            <SecondaryCta href={DEMO_MAILTO}>Request a demo</SecondaryCta>
+            <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
+            <SecondaryCta href={APP_URL}>Launch the live demo →</SecondaryCta>
           </div>
           <p className="mt-4 text-xs text-slate-600">
             CSV upload or n8n push · per-tenant separation · audit-ready exports
@@ -474,11 +477,15 @@ function CtaBand() {
             light up across all four views.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <PrimaryCta>Request a demo</PrimaryCta>
-            <SecondaryCta href="mailto:hello@wavelytics.app?subject=Wavelytics%20pilot">
-              Start a pilot
-            </SecondaryCta>
+            <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
+            <SecondaryCta href={APP_URL}>Launch the live demo →</SecondaryCta>
           </div>
+          <a
+            href={DEMO_MAILTO}
+            className="text-xs text-slate-500 transition hover:text-slate-300"
+          >
+            Prefer a guided walkthrough? Email us
+          </a>
         </Card>
       </div>
     </section>
