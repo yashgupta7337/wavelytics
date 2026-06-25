@@ -1,3 +1,5 @@
+import GradientText from "../components/GradientText.jsx";
+
 // Wavelytics marketing landing page — the public front door at "/".
 // Mounted via its own Vite entry (index.html) so it never touches the dashboard
 // React tree. Styling mirrors the dashboard: slate-900/950 surfaces, sky-400
@@ -148,7 +150,7 @@ function Nav() {
             Wavelytics
           </span>
           <span className="hidden text-xs text-slate-500 sm:inline">
-            a WaveConnect company
+            a product by WaveConnect
           </span>
         </a>
         <nav className="hidden items-center gap-6 text-sm text-slate-400 md:flex">
@@ -163,6 +165,9 @@ function Nav() {
           </a>
           <a className="transition hover:text-slate-100" href="#trust">
             Security
+          </a>
+          <a className="transition hover:text-slate-100" href="#about">
+            About
           </a>
         </nav>
         <div className="flex items-center gap-2">
@@ -194,9 +199,9 @@ function Hero() {
           </div>
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-slate-100 sm:text-5xl">
             One pane of glass for{" "}
-            <span className="text-sky-400">operational health</span>,{" "}
-            <span className="text-sky-400">risk</span> &amp;{" "}
-            <span className="text-sky-400">compliance</span>.
+            <GradientText>operational health</GradientText>,{" "}
+            <GradientText>risk</GradientText> &amp;{" "}
+            <GradientText>compliance</GradientText>.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-slate-400">
             Wavelytics is the operations &amp; compliance intelligence platform
@@ -317,7 +322,7 @@ function Views() {
         <div className="mx-auto max-w-2xl text-center">
           <Badge sev="low">Single pane of glass</Badge>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-100">
-            Four views. One source of truth.
+            Four views. <GradientText>One source of truth.</GradientText>
           </h2>
           <p className="mt-3 text-slate-400">
             Wavelytics unifies the four domains it grew out of — Data &amp;
@@ -367,7 +372,7 @@ function Segments() {
         <div className="mx-auto max-w-2xl text-center">
           <Badge sev="med">Built for regulated, ops-heavy teams</Badge>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-100">
-            Made for teams where mistakes are expensive
+            Made for teams where <GradientText>mistakes are expensive</GradientText>
           </h2>
           <p className="mt-3 text-slate-400">
             If your operation is audited, regulated, and measured on SLAs,
@@ -412,7 +417,7 @@ function HowItWorks() {
         <div className="mx-auto max-w-2xl text-center">
           <Badge sev="low">How it works</Badge>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-100">
-            Live in days, not quarters
+            <GradientText>Live in days, not quarters</GradientText>
           </h2>
         </div>
         <div className="mt-12 grid gap-5 md:grid-cols-3">
@@ -464,13 +469,123 @@ function Trust() {
   );
 }
 
+const TEAM = [
+  {
+    name: "Mr. Varun Gupta",
+    role: "Founder",
+    blurb:
+      "B.Tech, Electrical & Electronics — BITS Pilani. Built a track record delivering mission-critical, high-reliability systems for demanding environments.",
+    initials: "VG",
+    accent: "from-sky-500 to-indigo-500",
+  },
+  {
+    name: "Your name here",
+    role: "Engineering",
+    blurb:
+      "An open seat on the Wavelytics team — send me names and roles and I'll slot real members in here.",
+    initials: "+",
+    accent: "from-cyan-500 to-sky-500",
+    placeholder: true,
+  },
+  {
+    name: "Your name here",
+    role: "Product & Data",
+    blurb:
+      "Another placeholder, ready for the next person building Wavelytics. Easy to swap for a real profile.",
+    initials: "+",
+    accent: "from-indigo-500 to-violet-500",
+    placeholder: true,
+  },
+];
+
+const VALUES = [
+  {
+    t: "Engineering-led",
+    d: "Built by engineers who ship dependable systems — not yet-another dashboard tool.",
+  },
+  {
+    t: "Built for trust",
+    d: "Per-tenant isolation, audit trails, and security taken seriously from day one.",
+  },
+  {
+    t: "IT Products & Solutions",
+    d: "Wavelytics leads WaveConnect's expansion into data, AI, and cloud software.",
+  },
+];
+
+function About() {
+  return (
+    <section id="about" className="border-t border-slate-800 bg-slate-950">
+      <div className="mx-auto max-w-7xl px-4 py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <Badge sev="low">IT Products &amp; Solutions</Badge>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-100">
+            Engineering-grade software, from a{" "}
+            <GradientText>deep-tech company</GradientText>
+          </h2>
+          <p className="mt-3 text-slate-400">
+            Wavelytics is built by{" "}
+            <span className="font-semibold text-slate-200">WaveConnect</span> — an
+            engineering-led technology company with a track record of delivering
+            mission-critical, high-reliability systems. Wavelytics is our flagship IT
+            product: that same engineering rigor, brought to data, AI, and cloud software
+            for regulated, ops-heavy teams.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {TEAM.map((m) => (
+            <Card key={m.name + m.role} className="flex flex-col items-start">
+              <span
+                className={`inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br ${m.accent} text-lg font-bold text-white shadow`}
+              >
+                {m.initials}
+              </span>
+              <h3 className="mt-4 text-base font-semibold text-slate-100">{m.name}</h3>
+              <p className="text-xs font-medium text-sky-400">{m.role}</p>
+              <p className="mt-2 text-sm text-slate-400">{m.blurb}</p>
+              {m.placeholder && (
+                <span className="mt-3 rounded-full border border-slate-700 px-2 py-0.5 text-[10px] uppercase tracking-wide text-slate-500">
+                  Placeholder
+                </span>
+              )}
+            </Card>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {VALUES.map((v) => (
+            <Card key={v.t}>
+              <h3 className="text-sm font-semibold text-slate-100">{v.t}</h3>
+              <p className="mt-2 text-xs text-slate-400">{v.d}</p>
+            </Card>
+          ))}
+        </div>
+
+        <p className="mt-10 text-center text-xs text-slate-600">
+          Part of{" "}
+          <a
+            href="https://waveconnect.net.in"
+            target="_blank"
+            rel="noreferrer"
+            className="text-slate-400 underline-offset-2 hover:text-slate-200 hover:underline"
+          >
+            WaveConnect Communications Pvt. Ltd.
+          </a>{" "}
+          · New Delhi, India
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function CtaBand() {
   return (
     <section className="border-t border-slate-800 bg-slate-950">
       <div className="mx-auto max-w-7xl px-4 py-16">
         <Card className="flex flex-col items-center gap-5 bg-gradient-to-b from-slate-900/80 to-slate-900/40 p-8 text-center sm:p-12">
           <h2 className="text-2xl font-bold tracking-tight text-slate-100 sm:text-3xl">
-            See your own operations, risk &amp; compliance — live.
+            See your own operations, risk &amp; compliance — <GradientText>live.</GradientText>
           </h2>
           <p className="max-w-xl text-slate-400">
             Bring a CSV export to a 30-minute call and watch your real numbers
@@ -500,7 +615,7 @@ function Footer() {
           <span className="font-semibold text-slate-400">Wavelytics</span>
           <span>Operations &amp; Compliance Intelligence</span>
         </div>
-        <p>© 2026 Wavelytics · a WaveConnect company</p>
+        <p>© 2026 Wavelytics · a product by WaveConnect</p>
       </div>
     </footer>
   );
@@ -516,6 +631,7 @@ export default function Landing() {
         <Segments />
         <HowItWorks />
         <Trust />
+        <About />
         <CtaBand />
       </main>
       <Footer />

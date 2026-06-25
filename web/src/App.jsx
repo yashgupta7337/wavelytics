@@ -162,7 +162,7 @@ export default function App() {
       </main>
 
       <footer className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-slate-600">
-        © 2026 Wavelytics · a WaveConnect company
+        © 2026 Wavelytics · a product by WaveConnect
       </footer>
 
       {showUpload && (
