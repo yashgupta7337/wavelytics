@@ -13,16 +13,17 @@
   --color-faint: var(--faint);
 }
 
-/* Light theme (default). */
+/* Light theme (default) — soft, muted (not stark white). Cards (surface) sit
+   slightly lighter than the page (bg) for gentle depth. */
 :root {
   color-scheme: light;
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-2: #f1f5f9;
-  --line: #e2e8f0;
-  --ink: #0f172a;
-  --muted: #475569;
-  --faint: #94a3b8;
+  --bg: #e9edf3;
+  --surface: #f4f6f9;
+  --surface-2: #e6eaf1;
+  --line: #d3dae4;
+  --ink: #1e293b;
+  --muted: #54637a;
+  --faint: #8795a9;
 }
 
 /* Dark theme — the original Wavelytics palette. */

@@ -33,6 +33,10 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
     setErrors({});
     setNotice("");
     setSigninFailed(false);
+    // Clear the form when toggling between sign in / sign up.
+    setEmail("");
+    setPassword("");
+    setConfirm("");
   }
 
   function clearError(field) {

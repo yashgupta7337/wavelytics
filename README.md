@@ -70,3 +70,7 @@ open, simulated demo. See [`DEPLOY.md`](./DEPLOY.md) §5.
 The frontend is a static build (`npm run build` → `web/dist`) and the API is a
 small Node service. See the deployment notes for hosting both without AWS
 (Vercel/Netlify + Render/Railway/Fly + Neon/Supabase).
+
+## Credits
+- Favicon: ["Wave" icon by Freepik](https://www.flaticon.com/free-icon/wave_616545)
+  from [Flaticon](https://www.flaticon.com/).

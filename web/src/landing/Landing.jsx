@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import GradientText from "../components/GradientText.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 import Reveal from "./Reveal.jsx";
@@ -13,8 +14,38 @@ const APP_URL = "/app/";
 const SIGNIN_URL = "/app/?auth=signin";
 const SIGNUP_URL = "/app/?auth=signup";
 
-const DEMO_MAILTO =
-  "mailto:hello@wavelytics.app?subject=Wavelytics%20demo%20request&body=Hi%20Wavelytics%20team%2C%20we%27d%20like%20a%20demo.";
+const CONTACT_EMAIL = "info@waveconnect.net.in";
+const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=Wavelytics%20enquiry`;
+const OFFICE_ADDRESS = "B-1, First Floor, Paschim Vihar, New Delhi - 110063, Delhi, India";
+
+const NAV_LINKS = [
+  ["#views", "Platform"],
+  ["#segments", "Who it's for"],
+  ["#how-it-works", "How it works"],
+  ["#trust", "Security"],
+  ["#about", "About us"],
+  ["#contact", "Contact us"],
+];
+
+// Small inline wave mark used as the wordmark glyph. (Favicon uses the Flaticon
+// "wave" icon — credited in README.)
+function WaveMark({ className = "h-6 w-6" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`${className} text-sky-400`}
+      aria-hidden="true"
+    >
+      <path d="M2 8c2 0 2 1.8 4 1.8S8 8 10 8s2 1.8 4 1.8S16 8 18 8s2 1.8 4 1.8" />
+      <path d="M2 14c2 0 2 1.8 4 1.8S8 14 10 14s2 1.8 4 1.8S16 14 18 14s2 1.8 4 1.8" />
+    </svg>
+  );
+}
 
 function LiveDot() {
   return (
@@ -25,7 +56,7 @@ function LiveDot() {
   );
 }
 
-function PrimaryCta({ href = DEMO_MAILTO, children, className = "" }) {
+function PrimaryCta({ href = CONTACT_MAILTO, children, className = "" }) {
   return (
     <a
       href={href}
@@ -144,42 +175,68 @@ const icons = {
 /* ---- Sections ---- */
 
 function Nav() {
+  const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg/80 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        <a href="#top" className="flex items-baseline gap-2">
-          <span className="text-lg font-bold tracking-tight text-ink">
-            Wavelytics
-          </span>
-          <span className="hidden text-xs text-muted sm:inline">
-            a product by WaveConnect
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
+        <a href="#top" className="flex items-center gap-2">
+          <WaveMark className="h-6 w-6 shrink-0" />
+          <span className="flex flex-col leading-tight">
+            <span className="text-lg font-bold tracking-tight text-ink">Wavelytics</span>
+            <span className="text-[10px] text-muted">a product by WaveConnect</span>
           </span>
         </a>
-        <nav className="hidden items-center gap-6 text-sm text-muted md:flex">
-          <a className="transition hover:text-ink" href="#views">
-            Platform
-          </a>
-          <a className="transition hover:text-ink" href="#segments">
-            Who it&apos;s for
-          </a>
-          <a className="transition hover:text-ink" href="#how-it-works">
-            How it works
-          </a>
-          <a className="transition hover:text-ink" href="#trust">
-            Security
-          </a>
-          <a className="transition hover:text-ink" href="#about">
-            About
-          </a>
+        <nav className="hidden items-center gap-5 text-sm text-muted md:flex">
+          {NAV_LINKS.map(([href, label]) => (
+            <a key={href} className="transition hover:text-ink" href={href}>
+              {label}
+            </a>
+          ))}
         </nav>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <SecondaryCta href={SIGNIN_URL} className="hidden px-4 py-2 sm:inline-flex">
-            Sign in
-          </SecondaryCta>
-          <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
+          <div className="hidden items-center gap-2 sm:flex">
+            <SecondaryCta href={SIGNIN_URL} className="px-4 py-2">
+              Sign in
+            </SecondaryCta>
+            <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            aria-label="Menu"
+            aria-expanded={open}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-line text-muted transition hover:text-ink md:hidden"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-5 w-5" aria-hidden="true">
+              {open ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+            </svg>
+          </button>
         </div>
       </div>
+
+      {open && (
+        <nav className="border-t border-line bg-bg px-4 py-2 md:hidden">
+          {NAV_LINKS.map(([href, label]) => (
+            <a
+              key={href}
+              href={href}
+              onClick={() => setOpen(false)}
+              className="block py-2 text-sm text-muted transition hover:text-ink"
+            >
+              {label}
+            </a>
+          ))}
+          <div className="mt-2 flex gap-2 border-t border-line pt-3">
+            <SecondaryCta href={SIGNIN_URL} className="flex-1 px-4 py-2">
+              Sign in
+            </SecondaryCta>
+            <PrimaryCta href={SIGNUP_URL} className="flex-1">
+              Get started
+            </PrimaryCta>
+          </div>
+        </nav>
+      )}
     </header>
   );
 }
@@ -616,14 +673,45 @@ function CtaBand() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <PrimaryCta href={SIGNUP_URL}>Get started</PrimaryCta>
             <SecondaryCta href={APP_URL}>Launch the live demo →</SecondaryCta>
+            <SecondaryCta href={CONTACT_MAILTO}>Email us</SecondaryCta>
           </div>
-          <a
-            href={DEMO_MAILTO}
-            className="text-xs text-muted transition hover:text-muted"
-          >
-            Prefer a guided walkthrough? Email us
-          </a>
         </Card>
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section id="contact" className="border-t border-line bg-bg">
+      <div className="mx-auto max-w-7xl px-4 py-16">
+        <div className="mx-auto max-w-2xl text-center">
+          <Badge sev="low">Contact us</Badge>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-ink">
+            Let&apos;s <GradientText>talk</GradientText>
+          </h2>
+          <p className="mt-3 text-muted">
+            A pilot, a question, or a guided walkthrough — we&apos;d love to hear from you.
+          </p>
+        </div>
+        <div className="mx-auto mt-8 grid max-w-2xl gap-4 sm:grid-cols-2">
+          <Card>
+            <h3 className="text-sm font-semibold text-ink">Email</h3>
+            <a
+              href={CONTACT_MAILTO}
+              className="mt-1 block break-words text-sm text-sky-400 hover:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>
+          </Card>
+          <Card>
+            <h3 className="text-sm font-semibold text-ink">Corporate office</h3>
+            <p className="mt-1 text-sm text-muted">{OFFICE_ADDRESS}</p>
+          </Card>
+        </div>
+        <div className="mt-6 text-center">
+          <PrimaryCta href={CONTACT_MAILTO}>Email us</PrimaryCta>
+        </div>
       </div>
     </section>
   );
@@ -632,20 +720,34 @@ function CtaBand() {
 function Footer() {
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-8 text-xs text-faint sm:flex-row">
-        <div className="flex items-baseline gap-2">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-8 text-center text-xs text-faint sm:flex-row sm:text-left">
+        <div className="flex items-center gap-2">
+          <WaveMark className="h-4 w-4" />
           <span className="font-semibold text-muted">Wavelytics</span>
-          <span>Operations &amp; Compliance Intelligence</span>
+          <span>· a product by WaveConnect</span>
         </div>
-        <p>© 2026 Wavelytics · a product by WaveConnect</p>
+        <p>© 2026 Wavelytics · {OFFICE_ADDRESS}</p>
       </div>
     </footer>
   );
 }
 
 export default function Landing() {
+  // On (re)load, start at the top and strip any lingering #hash from the URL so
+  // a refresh doesn't restore mid-page scroll or leave "#about" hanging.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-bg text-ink">
+    <div className="min-h-screen overflow-x-hidden bg-bg text-ink">
       <Nav />
       <main>
         <Hero />
@@ -666,6 +768,9 @@ export default function Landing() {
         </Reveal>
         <Reveal>
           <CtaBand />
+        </Reveal>
+        <Reveal>
+          <Contact />
         </Reveal>
       </main>
       <Footer />
