@@ -5,13 +5,16 @@ import PasswordStrength from "./PasswordStrength.jsx";
 
 // Full-page sign in / create account experience. Two-column card (brand panel +
 // form) floating over a drifting aurora background; a segmented control slides
-// between "Sign in" and "Create account". Everyone on the same email domain
-// shares one tenant workspace (enforced server-side).
+// between "Sign in" and "Create account", and the form content fades up on
+// switch. Everyone on the same email domain shares one tenant workspace.
 const VALUE_POINTS = [
   "Operational, risk & compliance health in one live view",
   "Your data stays yours — strict per-tenant separation",
   "RAG alerts and audit-ready exports, built in",
 ];
+
+// Practical RFC 5322 email check (no eager validation — only on submit).
+const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip }) {
   const [mode, setMode] = useState(initialMode === "signup" ? "signup" : "signin");
@@ -19,50 +22,96 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({}); // { email, password, confirm, form }
   const [notice, setNotice] = useState("");
+  const [signinFailed, setSigninFailed] = useState(false); // wrong email/pw combo
 
   const isSignup = mode === "signup";
-  const strength = scorePassword(password);
-  const canSubmit =
-    !busy && (!isSignup || (strength.acceptable && password === confirm));
 
   function switchMode(next) {
     setMode(next);
-    setError("");
+    setErrors({});
     setNotice("");
+    setSigninFailed(false);
+  }
+
+  function clearError(field) {
+    setErrors((prev) => (prev[field] ? { ...prev, [field]: undefined } : prev));
+    if (signinFailed) setSigninFailed(false);
+  }
+
+  function validate() {
+    const errs = {};
+    if (!EMAIL_RE.test(email)) errs.email = "Enter a valid email address.";
+    if (isSignup) {
+      const { checks } = scorePassword(password);
+      const missing = [];
+      if (!checks.length) missing.push("at least 8 characters");
+      if (!checks.upper) missing.push("an uppercase letter");
+      if (!checks.symbol) missing.push("a special character");
+      if (missing.length) errs.password = `Password needs ${missing.join(", ")}.`;
+      if (password !== confirm) errs.confirm = "Passwords don't match.";
+    } else if (!password) {
+      errs.password = "Enter your password.";
+    }
+    return errs;
   }
 
   async function submit(e) {
     e.preventDefault();
-    setError("");
     setNotice("");
-    if (isSignup && !strength.acceptable) {
-      setError("Please choose a stronger password.");
-      return;
-    }
-    if (isSignup && password !== confirm) {
-      setError("Passwords don't match.");
-      return;
-    }
+    setSigninFailed(false);
+    const errs = validate();
+    setErrors(errs);
+    if (Object.values(errs).some(Boolean)) return;
+
     setBusy(true);
     try {
       if (isSignup) {
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         if (data.session) {
-          onAuthed?.(); // email confirmation is off — signed in immediately
+          onAuthed?.(); // email confirmation off — signed in immediately
         } else {
           setNotice("Account created. Check your inbox to confirm, then sign in.");
           switchMode("signin");
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) {
+          if (/not confirmed/i.test(error.message)) {
+            setNotice("Please confirm your email first — check your inbox.");
+          } else {
+            // Supabase returns a single generic error for unknown-email and
+            // wrong-password (anti-enumeration), so we offer both next steps.
+            setSigninFailed(true);
+          }
+          return;
+        }
         onAuthed?.();
       }
     } catch (err) {
-      setError(err.message || "Authentication failed.");
+      setErrors({ form: err.message || "Authentication failed." });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function forgotPassword() {
+    if (!EMAIL_RE.test(email)) {
+      setErrors({ email: "Enter your email above, then tap Forgot password." });
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/app/?auth=signin`,
+      });
+      if (error) throw error;
+      setSigninFailed(false);
+      setNotice(`Password reset link sent to ${email}.`);
+    } catch (err) {
+      setErrors({ form: err.message || "Could not send reset email." });
     } finally {
       setBusy(false);
     }
@@ -70,6 +119,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
 
   const inputCls =
     "w-full rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-sky-500";
+  const errInputCls = "border-rose-500/70 focus:border-rose-500";
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-14">
@@ -83,7 +133,6 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
             top: "-7rem",
             left: "-5rem",
             background: "radial-gradient(circle, rgba(56,189,248,0.55), transparent 70%)",
-            animationDelay: "0s",
           }}
         />
         <span
@@ -110,12 +159,24 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
         />
       </div>
 
-      {/* Back to site — outside the card, top-left */}
+      {/* Back to site — pill ghost button, outside the card, top-left */}
       <a
         href="/"
-        className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900/70 px-3 py-1.5 text-xs font-medium text-slate-300 backdrop-blur transition hover:border-slate-500 hover:text-white"
+        className="group absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900/60 px-3.5 py-1.5 text-xs font-medium text-slate-300 backdrop-blur transition hover:border-sky-500/60 hover:bg-sky-500/10 hover:text-white"
       >
-        ← Back to site
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5"
+          aria-hidden="true"
+        >
+          <path d="M19 12H5m6-7-7 7 7 7" />
+        </svg>
+        Back to site
       </a>
 
       <div className="relative z-10 w-full max-w-4xl">
@@ -159,16 +220,16 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
             </a>
 
             {/* Sliding segmented toggle */}
-            <div className="relative grid grid-cols-2 rounded-lg border border-slate-800 bg-slate-800/60 text-sm font-semibold">
+            <div className="relative grid grid-cols-2 rounded-lg border border-slate-800 bg-slate-800/60 p-1 text-sm font-semibold">
               <span
-                className={`absolute inset-y-0 left-0 w-1/2 rounded-lg bg-sky-500 shadow transition-transform duration-300 ease-out ${
-                  isSignup ? "translate-x-full" : "translate-x-0"
+                className={`absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-md bg-sky-500 shadow transition-transform duration-300 ease-out ${
+                  isSignup ? "translate-x-[calc(100%+0.25rem)]" : "translate-x-0"
                 }`}
               />
               <button
                 type="button"
                 onClick={() => switchMode("signin")}
-                className={`relative z-10 py-2.5 text-center transition-colors ${
+                className={`relative z-10 rounded-md py-2 text-center transition-colors ${
                   isSignup ? "text-slate-400 hover:text-slate-200" : "text-white"
                 }`}
               >
@@ -177,7 +238,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
               <button
                 type="button"
                 onClick={() => switchMode("signup")}
-                className={`relative z-10 py-2.5 text-center transition-colors ${
+                className={`relative z-10 rounded-md py-2 text-center transition-colors ${
                   isSignup ? "text-white" : "text-slate-400 hover:text-slate-200"
                 }`}
               >
@@ -185,70 +246,117 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
               </button>
             </div>
 
-            <h1 className="mt-6 text-xl font-bold text-slate-100">
-              {isSignup ? "Create your account" : "Welcome back"}
-            </h1>
-            <p className="mt-1 text-sm text-slate-400">
-              {isSignup
-                ? "Start with your work email — your whole team shares one workspace."
-                : "Sign in to your Wavelytics workspace."}
-            </p>
+            {/* Heading fades up on each mode switch */}
+            <div key={mode} className="fade-up">
+              <h1 className="mt-6 text-xl font-bold text-slate-100">
+                {isSignup ? "Create your account" : "Welcome back"}
+              </h1>
+              <p className="mt-1 text-sm text-slate-400">
+                {isSignup
+                  ? "Start with your work email — your whole team shares one workspace."
+                  : "Sign in to your Wavelytics workspace."}
+              </p>
+            </div>
 
-            <form onSubmit={submit} className="mt-5 space-y-3">
-              <input
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                className={inputCls}
-              />
-              <input
-                type="password"
-                required
-                minLength={6}
-                autoComplete={isSignup ? "new-password" : "current-password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className={inputCls}
-              />
+            <form onSubmit={submit} noValidate className="mt-5 space-y-3">
+              <div>
+                <input
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    clearError("email");
+                  }}
+                  placeholder="you@company.com"
+                  className={`${inputCls} ${errors.email ? errInputCls : ""}`}
+                />
+                {errors.email && <p className="mt-1 text-xs text-rose-400">{errors.email}</p>}
+              </div>
 
-              {/* Live strength meter (sign-up only) */}
-              {isSignup && <PasswordStrength password={password} />}
+              <div>
+                <input
+                  type="password"
+                  autoComplete={isSignup ? "new-password" : "current-password"}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    clearError("password");
+                  }}
+                  placeholder="Password"
+                  className={`${inputCls} ${errors.password ? errInputCls : ""}`}
+                />
+                {errors.password && (
+                  <p className="mt-1 text-xs text-rose-400">{errors.password}</p>
+                )}
+                {isSignup && <PasswordStrength password={password} />}
+              </div>
 
               {/* Confirm password animates in for sign-up */}
               <div
                 className={`overflow-hidden transition-all duration-300 ${
-                  isSignup ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
+                  isSignup ? "max-h-24 opacity-100" : "max-h-0 opacity-0"
                 }`}
               >
                 <input
                   type="password"
-                  required={isSignup}
-                  minLength={6}
                   autoComplete="new-password"
                   value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
+                  onChange={(e) => {
+                    setConfirm(e.target.value);
+                    clearError("confirm");
+                  }}
                   placeholder="Confirm password"
-                  className={inputCls}
+                  className={`${inputCls} ${errors.confirm ? errInputCls : ""}`}
                 />
-                {isSignup && confirm && confirm !== password && (
-                  <p className="mt-1 text-[11px] text-rose-400">Passwords don't match.</p>
+                {errors.confirm && (
+                  <p className="mt-1 text-xs text-rose-400">{errors.confirm}</p>
                 )}
               </div>
 
-              {error && <p className="text-xs text-rose-400">{error}</p>}
+              {/* Wrong email/password — soft message with both next steps */}
+              {signinFailed && (
+                <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+                  That email and password don't match.
+                  <div className="mt-2 flex flex-wrap gap-4">
+                    <button
+                      type="button"
+                      onClick={() => switchMode("signup")}
+                      className="font-semibold text-sky-300 underline-offset-2 hover:underline"
+                    >
+                      Create an account →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={forgotPassword}
+                      className="font-semibold text-sky-300 underline-offset-2 hover:underline"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {errors.form && <p className="text-xs text-rose-400">{errors.form}</p>}
               {notice && <p className="text-xs text-emerald-400">{notice}</p>}
 
               <button
                 type="submit"
-                disabled={!canSubmit}
+                disabled={busy}
                 className="w-full rounded-lg bg-sky-500 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {busy ? "Please wait…" : isSignup ? "Create account" : "Sign in"}
               </button>
+
+              {!isSignup && !signinFailed && (
+                <button
+                  type="button"
+                  onClick={forgotPassword}
+                  className="w-full text-center text-xs text-slate-500 transition hover:text-slate-300"
+                >
+                  Forgot password?
+                </button>
+              )}
             </form>
           </div>
         </div>

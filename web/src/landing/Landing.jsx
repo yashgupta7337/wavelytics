@@ -1,4 +1,5 @@
 import GradientText from "../components/GradientText.jsx";
+import Reveal from "./Reveal.jsx";
 
 // Wavelytics marketing landing page — the public front door at "/".
 // Mounted via its own Vite entry (index.html) so it never touches the dashboard
@@ -471,30 +472,53 @@ function Trust() {
 
 const TEAM = [
   {
-    name: "Mr. Varun Gupta",
-    role: "Founder",
-    blurb:
-      "B.Tech, Electrical & Electronics — BITS Pilani. Built a track record delivering mission-critical, high-reliability systems for demanding environments.",
+    name: "Varun Gupta",
+    role: "Founder & Managing Director",
     initials: "VG",
     accent: "from-sky-500 to-indigo-500",
+    bio: (
+      <>
+        Founder-operator and the driving builder of the business, with roots in
+        telecom infrastructure. He also runs{" "}
+        <a
+          href="https://waveconnect.net.in"
+          target="_blank"
+          rel="noreferrer"
+          className="font-medium text-sky-400 underline-offset-2 hover:underline"
+        >
+          WaveConnect
+        </a>{" "}
+        Communication Pvt. Ltd. — a telecom business delivering services and
+        expertise pan-India alongside premium OEMs.
+      </>
+    ),
   },
   {
-    name: "Your name here",
-    role: "Engineering",
-    blurb:
-      "An open seat on the Wavelytics team — send me names and roles and I'll slot real members in here.",
-    initials: "+",
+    name: "Yash Gupta",
+    role: "Engineering (Director)",
+    initials: "YG",
     accent: "from-cyan-500 to-sky-500",
-    placeholder: true,
+    bio: (
+      <>
+        Engineering leadership for the product — data and infrastructure. 2+ years
+        building and owning production data platforms end-to-end in lean health-tech
+        environments (2020–2024). B.Tech, Computer Science Engineering — Shiv Nadar
+        University, India.
+      </>
+    ),
   },
   {
-    name: "Your name here",
-    role: "Product & Data",
-    blurb:
-      "Another placeholder, ready for the next person building Wavelytics. Easy to swap for a real profile.",
-    initials: "+",
+    name: "Dhruv Gupta",
+    role: "Product & Sales (Director)",
+    initials: "DG",
     accent: "from-indigo-500 to-violet-500",
-    placeholder: true,
+    bio: (
+      <>
+        Leads product thinking and go-to-market — turning customer problems into
+        roadmap and pipeline into pilots. B.Tech, Computer Science Engineering —
+        Shiv Nadar University, India.
+      </>
+    ),
   },
 ];
 
@@ -543,12 +567,7 @@ function About() {
               </span>
               <h3 className="mt-4 text-base font-semibold text-slate-100">{m.name}</h3>
               <p className="text-xs font-medium text-sky-400">{m.role}</p>
-              <p className="mt-2 text-sm text-slate-400">{m.blurb}</p>
-              {m.placeholder && (
-                <span className="mt-3 rounded-full border border-slate-700 px-2 py-0.5 text-[10px] uppercase tracking-wide text-slate-500">
-                  Placeholder
-                </span>
-              )}
+              <p className="mt-2 text-sm text-slate-400">{m.bio}</p>
             </Card>
           ))}
         </div>
@@ -627,12 +646,24 @@ export default function Landing() {
       <Nav />
       <main>
         <Hero />
-        <Views />
-        <Segments />
-        <HowItWorks />
-        <Trust />
-        <About />
-        <CtaBand />
+        <Reveal>
+          <Views />
+        </Reveal>
+        <Reveal>
+          <Segments />
+        </Reveal>
+        <Reveal>
+          <HowItWorks />
+        </Reveal>
+        <Reveal>
+          <Trust />
+        </Reveal>
+        <Reveal>
+          <About />
+        </Reveal>
+        <Reveal>
+          <CtaBand />
+        </Reveal>
       </main>
       <Footer />
     </div>

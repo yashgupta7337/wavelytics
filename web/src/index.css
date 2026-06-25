@@ -4,6 +4,12 @@
   color-scheme: dark;
 }
 
+/* Smooth in-page navigation, offset for the sticky navbar. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -26,6 +32,36 @@ body {
   color: transparent;
   -webkit-text-fill-color: transparent;
   animation: gradient-flow 6s linear infinite;
+}
+
+/* Subtle enter animation (fade + translateY) — used by the auth mode switch
+   and the on-scroll section reveals. */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.4s ease both;
+}
+
+/* On-scroll reveal: hidden until the .is-visible class is added by the
+   IntersectionObserver (see Reveal.jsx). */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
 }
 
 /* Drifting aurora blobs for the auth screen background. */
@@ -56,7 +92,16 @@ body {
 /* Respect users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   .gradient-text,
-  .aurora-blob {
+  .aurora-blob,
+  .fade-up {
     animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto;
   }
 }
