@@ -1,0 +1,46 @@
+name: Keep API warm
+
+# The API runs on Render's free tier, which spins the service down after ~15 min
+# of no requests; the next request then cold-starts for ~50-60s. This workflow
+# pings the health endpoint on a schedule so the service stays awake. It uses
+# GitHub's own scheduler — no extra accounts or services.
+#
+# If your Render URL differs from the default below, set a repository variable
+# named RENDER_HEALTH_URL (Settings → Secrets and variables → Actions →
+# Variables) to e.g. https://your-api.onrender.com/api/health. No account needed.
+
+on:
+  schedule:
+    # Every 10 minutes. GitHub may delay scheduled runs under load, so this is
+    # best-effort; a rare miss just means one cold start.
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+permissions: {}
+
+concurrency:
+  group: keep-warm
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API health endpoint
+        env:
+          URL: ${{ vars.RENDER_HEALTH_URL || 'https://wavelytics-api.onrender.com/api/health' }}
+        run: |
+          echo "Pinging $URL"
+          for attempt in 1 2 3 4 5; do
+            code=$(curl -fsS -o /dev/null -w '%{http_code}' --max-time 90 "$URL" || echo "000")
+            echo "Attempt $attempt: HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "API is awake."
+              exit 0
+            fi
+            sleep 20
+          done
+          # A single request already holds long enough to wake a cold instance;
+          # don't fail the run on a transient miss — the next schedule retries.
+          echo "API did not return 200 yet (may still be waking); will retry next run."
+          exit 0

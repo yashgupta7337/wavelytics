@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { fetchTimeout } from "./lib/fetchTimeout.js";
 
 const API = import.meta.env.VITE_API_URL ?? "";
 
@@ -23,7 +24,7 @@ export function useAlerts(token = null, refreshSignal = 0, intervalMs = 8000) {
     async function tick() {
       if (offline.current) return;
       try {
-        const res = await fetch(`${API}/api/alerts`, {
+        const res = await fetchTimeout(`${API}/api/alerts`, {
           cache: "no-store",
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         });
@@ -31,6 +32,9 @@ export function useAlerts(token = null, refreshSignal = 0, intervalMs = 8000) {
         const json = await res.json();
         if (alive) setAlerts(json);
       } catch {
+        // Authed: keep trying for the tenant's real rule status (don't blank).
+        // Demo: settle on neutral so a cold API doesn't stall the UI.
+        if (token) return;
         offline.current = true;
         if (alive) setAlerts(EMPTY);
       }

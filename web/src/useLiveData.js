@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { seedData, nextData } from "./data/feed.js";
+import { fetchTimeout } from "./lib/fetchTimeout.js";
 
 // Base URL of the API. Empty string => same origin (dev proxy / co-hosted).
 // Set VITE_API_URL at build time to point at a deployed API.
@@ -25,7 +26,7 @@ export function useLiveData(intervalMs = 3000, token = null, refreshSignal = 0) 
     async function tick() {
       if (!offline.current) {
         try {
-          const res = await fetch(`${API}/api/snapshot`, {
+          const res = await fetchTimeout(`${API}/api/snapshot`, {
             cache: "no-store",
             headers: token ? { Authorization: `Bearer ${token}` } : undefined,
           });
@@ -34,6 +35,11 @@ export function useLiveData(intervalMs = 3000, token = null, refreshSignal = 0) 
           if (alive) setData(json);
           return;
         } catch {
+          // A signed-in user must see THEIR data, never the simulated feed —
+          // so if the API is slow/cold we just retry on the next tick instead
+          // of showing demo numbers. The public demo (no token) falls back to
+          // the local feed so the console always looks live.
+          if (token) return;
           offline.current = true; // stop hammering a missing API
         }
       }
