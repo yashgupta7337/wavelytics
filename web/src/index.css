@@ -17,13 +17,13 @@
    slightly lighter than the page (bg) for gentle depth. */
 :root {
   color-scheme: light;
-  --bg: #e9edf3;
-  --surface: #f4f6f9;
-  --surface-2: #e6eaf1;
-  --line: #d3dae4;
-  --ink: #1e293b;
-  --muted: #54637a;
-  --faint: #8795a9;
+  --bg: #e6e9f0;
+  --surface: #eef1f7;
+  --surface-2: #e0e5ee;
+  --line: #ccd4e1;
+  --ink: #1e2a3d;
+  --muted: #54627a;
+  --faint: #8693a8;
 }
 
 /* Dark theme — the original Wavelytics palette. */
@@ -66,33 +66,26 @@ body {
   filter: drop-shadow(0 0 2.5px rgba(56, 189, 248, 0.45));
 }
 
-/* Dashboard section tabs: a soft glow "surfs" left→right across the labels,
-   brightening each one as it passes (mix-blend screen lifts the text it covers).
-   The element is wider than a single tab so the light feels continuous. */
-@keyframes tab-surf {
-  from {
-    transform: translateX(-110%);
+/* Dashboard section tabs: a sky glow traces through each label in turn — a
+   tight glow on the glyphs themselves (not the gaps between words). Each tab's
+   animation-delay (set in App.jsx) staggers the pulse so it walks across the
+   titles like a light moving through them. */
+@keyframes tab-glow {
+  0%,
+  24%,
+  100% {
+    text-shadow: none;
+    filter: none;
   }
-  to {
-    transform: translateX(260%);
+  10% {
+    text-shadow: 0 0 7px rgba(56, 189, 248, 0.75),
+      0 0 12px rgba(56, 189, 248, 0.35);
+    filter: brightness(1.4);
   }
 }
-.tab-surf {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 42%;
-  pointer-events: none;
-  border-radius: 9999px;
-  background: radial-gradient(
-    closest-side,
-    rgba(56, 189, 248, 0.5),
-    rgba(56, 189, 248, 0) 72%
-  );
-  filter: blur(8px);
-  mix-blend-mode: screen;
-  animation: tab-surf 5s ease-in-out infinite;
+.tab-glow {
+  display: inline-block;
+  animation: tab-glow 5s ease-in-out infinite;
 }
 
 /* Animated moving-gradient text for impactful titles. */
@@ -225,11 +218,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .gradient-text,
   .aurora-blob,
-  .fade-up {
+  .fade-up,
+  .tab-glow {
     animation: none;
-  }
-  .tab-surf {
-    display: none;
   }
   .reveal {
     opacity: 1;

@@ -228,22 +228,23 @@ export default function App() {
         {/* Horizontally scrollable on narrow screens so every tab (incl. Alerts)
             stays reachable; the inner strip clips the surfing glow to the tabs. */}
         <div className="mx-auto max-w-7xl overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="relative inline-flex w-max gap-1 overflow-hidden">
-            {TABS.map((t) => (
+          <div className="inline-flex w-max gap-1">
+            {TABS.map((t, i) => (
               <button
                 key={t.id}
                 onClick={() => setActive(t.id)}
-                className={`relative z-10 shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition ${
+                className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition ${
                   active === t.id
                     ? "border-sky-400 text-sky-300"
                     : "border-transparent text-muted hover:text-ink"
                 }`}
               >
-                {t.label}
+                {/* A sky glow traces through each label in turn (CSS in index.css). */}
+                <span className="tab-glow" style={{ animationDelay: `${i}s` }}>
+                  {t.label}
+                </span>
               </button>
             ))}
-            {/* Glow that surfs across the section labels (CSS in index.css). */}
-            <span className="tab-surf" aria-hidden="true" />
           </div>
         </div>
       </nav>

@@ -8,11 +8,12 @@ import {
   CartesianGrid,
 } from "recharts";
 import { Card, KpiCard, Stat } from "../components/ui.jsx";
-import { tooltipStyle } from "./Executive.jsx";
 import { toneFor } from "../useAlerts.js";
+import { useChartTheme } from "../lib/useChartTheme.js";
 
 export default function Operational({ data, status = {} }) {
   const { operational: o, trend } = data;
+  const ct = useChartTheme();
 
   return (
     <div className="flex flex-col gap-3 lg:h-full lg:min-h-0">
@@ -40,10 +41,10 @@ export default function Operational({ data, status = {} }) {
           <div className="h-[280px] w-full min-w-0 lg:h-auto lg:min-h-0 lg:flex-1">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={trend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="t" stroke="#64748b" fontSize={11} />
-              <YAxis stroke="#64748b" fontSize={11} />
-              <Tooltip contentStyle={tooltipStyle} />
+              <CartesianGrid strokeDasharray="3 3" stroke={ct.grid} />
+              <XAxis dataKey="t" stroke={ct.axis} fontSize={11} />
+              <YAxis stroke={ct.axis} fontSize={11} />
+              <Tooltip contentStyle={ct.tooltip} cursor={{ stroke: ct.grid }} />
               <Line type="monotone" dataKey="throughput" stroke="#a78bfa" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>

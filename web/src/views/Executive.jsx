@@ -9,10 +9,12 @@ import {
 } from "recharts";
 import { Card, KpiCard, Badge } from "../components/ui.jsx";
 import { toneFor } from "../useAlerts.js";
+import { useChartTheme } from "../lib/useChartTheme.js";
 
 export default function Executive({ data, status = {} }) {
   const { kpis, executive, trend } = data;
   const healthy = executive.health === "Healthy";
+  const ct = useChartTheme();
 
   return (
     <div className="flex flex-col gap-3 lg:h-full lg:min-h-0">
@@ -52,10 +54,10 @@ export default function Executive({ data, status = {} }) {
                 <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-            <XAxis dataKey="t" stroke="#64748b" fontSize={11} />
-            <YAxis stroke="#64748b" fontSize={11} />
-            <Tooltip contentStyle={tooltipStyle} />
+            <CartesianGrid strokeDasharray="3 3" stroke={ct.grid} />
+            <XAxis dataKey="t" stroke={ct.axis} fontSize={11} />
+            <YAxis stroke={ct.axis} fontSize={11} />
+            <Tooltip contentStyle={ct.tooltip} cursor={{ stroke: ct.grid }} />
             <Area type="monotone" dataKey="processed" stroke="#38bdf8" fill="url(#gProc)" />
             <Area type="monotone" dataKey="completed" stroke="#34d399" fill="url(#gComp)" />
           </AreaChart>
@@ -65,11 +67,3 @@ export default function Executive({ data, status = {} }) {
     </div>
   );
 }
-
-export const tooltipStyle = {
-  background: "#0f172a",
-  border: "1px solid #1e293b",
-  borderRadius: 8,
-  fontSize: 12,
-  color: "#e2e8f0",
-};

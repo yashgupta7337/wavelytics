@@ -548,6 +548,19 @@ const TEAM = [
     ),
   },
   {
+    name: "Dhruv Gupta",
+    role: "Product & Sales",
+    initials: "DG",
+    accent: "from-indigo-500 to-violet-500",
+    bio: (
+      <>
+        Connects customer problems to roadmap and pipeline to pilots. The bridge
+        between what Wavelytics needs to be and who needs it most. B.Tech CSE, Shiv
+        Nadar University.
+      </>
+    ),
+  },
+  {
     name: "Yash Gupta",
     role: "Engineering",
     initials: "YG",
@@ -558,19 +571,6 @@ const TEAM = [
         cloud bills. Now brings that infrastructure thinking directly to Wavelytics,
         building the data backbone the platform runs on. B.Tech CSE, Shiv Nadar
         University.
-      </>
-    ),
-  },
-  {
-    name: "Dhruv Gupta",
-    role: "Product & Sales",
-    initials: "DG",
-    accent: "from-indigo-500 to-violet-500",
-    bio: (
-      <>
-        Connects customer problems to roadmap and pipeline to pilots. The bridge
-        between what Wavelytics needs to be and who needs it most. B.Tech CSE, Shiv
-        Nadar University.
       </>
     ),
   },

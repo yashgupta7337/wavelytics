@@ -9,12 +9,13 @@ import {
   Legend,
 } from "recharts";
 import { Card, KpiCard, Badge } from "../components/ui.jsx";
-import { tooltipStyle } from "./Executive.jsx";
 import { toneFor } from "../useAlerts.js";
+import { useChartTheme } from "../lib/useChartTheme.js";
 
 export default function Risk({ data, status = {} }) {
   const { risk } = data;
   const totalHigh = risk.byCategory.reduce((s, c) => s + c.high, 0);
+  const ct = useChartTheme();
 
   return (
     <div className="flex flex-col gap-3 lg:h-full lg:min-h-0">
@@ -32,10 +33,10 @@ export default function Risk({ data, status = {} }) {
           <div className="h-[280px] w-full min-w-0 lg:h-auto lg:min-h-0 lg:flex-1">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={risk.byCategory}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="name" stroke="#64748b" fontSize={11} />
-              <YAxis stroke="#64748b" fontSize={11} />
-              <Tooltip contentStyle={tooltipStyle} />
+              <CartesianGrid strokeDasharray="3 3" stroke={ct.grid} />
+              <XAxis dataKey="name" stroke={ct.axis} fontSize={11} />
+              <YAxis stroke={ct.axis} fontSize={11} />
+              <Tooltip contentStyle={ct.tooltip} cursor={{ fill: ct.cursor }} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Bar dataKey="high" stackId="a" fill="#fb7185" name="High" />
               <Bar dataKey="medium" stackId="a" fill="#fbbf24" name="Medium" />
