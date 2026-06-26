@@ -554,10 +554,10 @@ const TEAM = [
         from the ground up — a telecom business delivering services and expertise
         pan-India alongside premium OEMs, with a track record of excellence and
         quality. Wavelytics is the next layer: the intelligence platform the group
-        needed and couldn't find. B.Tech in Electrical and Electronics Engineering
-        from BITS Pilani.
+        needed and couldn't find.
       </>
     ),
+    edu: "B.Tech, Electrical & Electronics Engineering — BITS Pilani",
   },
   {
     name: "Dhruv Gupta",
@@ -567,10 +567,10 @@ const TEAM = [
     bio: (
       <>
         Connects customer problems to roadmap and pipeline to pilots. The bridge
-        between what Wavelytics needs to be and who needs it most. B.Tech CSE, Shiv
-        Nadar University.
+        between what Wavelytics needs to be and who needs it most.
       </>
     ),
+    edu: "B.Tech, Computer Science Engineering — Shiv Nadar University",
   },
   {
     name: "Yash Gupta",
@@ -579,12 +579,11 @@ const TEAM = [
     accent: "from-cyan-500 to-sky-500",
     bio: (
       <>
-        Owned production data platforms solo for 2 years — cuts query time and
-        cloud bills. Now brings that infrastructure thinking directly to Wavelytics,
-        building the data backbone the platform runs on. B.Tech CSE, Shiv Nadar
-        University.
+        Spent 2 years deep in production data infrastructure. Knows what breaks at
+        3am — and built Wavelytics so it doesn't.
       </>
     ),
+    edu: "B.Tech, Computer Science Engineering — Shiv Nadar University",
   },
 ];
 
@@ -634,6 +633,11 @@ function About() {
               <h3 className="mt-4 text-base font-semibold text-ink">{m.name}</h3>
               <p className="text-xs font-medium text-sky-400">{m.role}</p>
               <p className="mt-2 text-sm text-muted">{m.bio}</p>
+              {/* Education — a subdued credential footnote, not part of the bio.
+                  Pinned to the card's bottom edge so it reads as a footnote. */}
+              <p className="mt-auto w-full border-t border-line pt-3 text-xs text-faint">
+                {m.edu}
+              </p>
             </Card>
           ))}
         </div>
