@@ -3,10 +3,13 @@ import { useLiveData } from "./useLiveData.js";
 import { useAlerts } from "./useAlerts.js";
 import { useAuth } from "./useAuth.js";
 import AuthScreen from "./components/AuthScreen.jsx";
+import ResetPasswordScreen from "./components/ResetPasswordScreen.jsx";
 import ThemeToggle from "./components/ThemeToggle.jsx";
 import WaveMark from "./components/WaveMark.jsx";
 import UploadPanel from "./components/UploadPanel.jsx";
 import RulesPanel from "./components/RulesPanel.jsx";
+import WorkspacePanel from "./components/WorkspacePanel.jsx";
+import WelcomePanel from "./components/WelcomePanel.jsx";
 import AuditReport from "./components/AuditReport.jsx";
 import Executive from "./views/Executive.jsx";
 import Operational from "./views/Operational.jsx";
@@ -31,7 +34,7 @@ function initialAuthView() {
 
 export default function App() {
   const [active, setActive] = useState("executive");
-  const { authEnabled, ready, user, token, signOut } = useAuth();
+  const { authEnabled, ready, user, token, recovery, clearRecovery, signOut } = useAuth();
   const [authView, setAuthView] = useState(initialAuthView);
   const [verified, setVerified] = useState(
     () =>
@@ -40,6 +43,8 @@ export default function App() {
   );
   const [showUpload, setShowUpload] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [showWorkspace, setShowWorkspace] = useState(false);
+  const [dismissedWelcome, setDismissedWelcome] = useState(false);
   const [refresh, setRefresh] = useState(0);
 
   // Sign out, then return to the marketing home page.
@@ -56,6 +61,9 @@ export default function App() {
   const { Component } = TABS.find((t) => t.id === active);
   const updated = new Date(data.updatedAt).toLocaleTimeString();
   const ownData = data.source === "upload";
+  // First-run: signed in but no own data yet — show a welcome instead of the demo.
+  const firstRun = authEnabled && !!user && !ownData;
+  const showWelcome = firstRun && !dismissedWelcome;
 
   // Once signed in, leave the auth screen and clean ?auth out of the URL.
   useEffect(() => {
@@ -66,6 +74,22 @@ export default function App() {
       }
     }
   }, [user, authView]);
+
+  // Password-recovery link target — must win even though a (temporary) session
+  // exists, so it's checked before everything else.
+  if (authEnabled && recovery) {
+    return (
+      <ResetPasswordScreen
+        onDone={() => {
+          clearRecovery();
+          if (window.history?.replaceState) {
+            window.history.replaceState({}, "", window.location.pathname);
+          }
+          setAuthView("signin");
+        }}
+      />
+    );
+  }
 
   // Landing target for the email-confirmation link: a clean "you're verified" page.
   if (verified) {
@@ -140,7 +164,7 @@ export default function App() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
               </span>
-              LIVE · updated {updated}
+              {ownData ? "Your data" : "LIVE"} · updated {updated}
             </span>
             {(alerts.summary.red > 0 || alerts.summary.amber > 0) && (
               <button
@@ -164,6 +188,12 @@ export default function App() {
             )}
             {authEnabled && user ? (
               <>
+                <button
+                  onClick={() => setShowWorkspace(true)}
+                  className="rounded-lg border border-line px-3 py-1.5 font-semibold text-ink hover:border-sky-500 hover:text-sky-300"
+                >
+                  Workspace
+                </button>
                 <button
                   onClick={() => setShowRules(true)}
                   className="rounded-lg border border-line px-3 py-1.5 font-semibold text-ink hover:border-sky-500 hover:text-sky-300"
@@ -193,37 +223,42 @@ export default function App() {
         </div>
       </header>
 
-      <div
-        className={`border-b text-xs ${
-          ownData
-            ? "border-emerald-900/50 bg-emerald-500/10 text-emerald-300"
-            : "border-line bg-surface/20 text-muted"
-        }`}
-      >
-        <div className="mx-auto max-w-7xl px-4 py-1.5">
-          {ownData ? (
-            "Showing your organization's live data."
-          ) : authEnabled && user ? (
-            "Sample data — upload a CSV to see your own metrics."
-          ) : (
-            <>
-              Sample / concept data —{" "}
-              {authEnabled ? (
-                <button
-                  onClick={() => setAuthView("signin")}
-                  className="font-semibold text-sky-300 underline-offset-2 hover:text-sky-200 hover:underline"
-                >
-                  sign in
-                </button>
-              ) : (
-                "sign in"
-              )}{" "}
-              to load your organization's own metrics.
-            </>
-          )}
+      {/* Slim data-source banner. Hidden during the first-run welcome, which
+          already explains the sample-data state. */}
+      {!showWelcome && (
+        <div
+          className={`border-b text-xs ${
+            ownData
+              ? "border-emerald-900/50 bg-emerald-500/10 text-emerald-300"
+              : "border-line bg-surface/20 text-muted"
+          }`}
+        >
+          <div className="mx-auto max-w-7xl px-4 py-1.5">
+            {ownData ? (
+              "Showing your organization's live data."
+            ) : authEnabled && user ? (
+              "Sample data — upload a CSV to see your own metrics."
+            ) : (
+              <>
+                Sample / concept data —{" "}
+                {authEnabled ? (
+                  <button
+                    onClick={() => setAuthView("signin")}
+                    className="font-semibold text-sky-300 underline-offset-2 hover:text-sky-200 hover:underline"
+                  >
+                    sign in
+                  </button>
+                ) : (
+                  "sign in"
+                )}{" "}
+                to load your organization's own metrics.
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
+      {!showWelcome && (
       <nav className="flex-none border-b border-line bg-surface/20">
         {/* Horizontally scrollable on narrow screens so every tab (incl. Alerts)
             stays reachable; the inner strip clips the surfing glow to the tabs. */}
@@ -248,9 +283,21 @@ export default function App() {
           </div>
         </div>
       </nav>
+      )}
 
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-4 lg:flex lg:min-h-0 lg:flex-col">
-        <Component data={data} status={alerts.statusByMetric} alerts={alerts} token={token} />
+        {showWelcome ? (
+          <div className="flex flex-1 items-center justify-center">
+            <div className="w-full max-w-3xl">
+              <WelcomePanel
+                onUpload={() => setShowUpload(true)}
+                onDismiss={() => setDismissedWelcome(true)}
+              />
+            </div>
+          </div>
+        ) : (
+          <Component data={data} status={alerts.statusByMetric} alerts={alerts} token={token} />
+        )}
       </main>
 
       <footer className="flex-none px-4 py-2 text-center text-[11px] text-faint">
@@ -270,6 +317,9 @@ export default function App() {
           onClose={() => setShowRules(false)}
           onSaved={() => setRefresh((n) => n + 1)}
         />
+      )}
+      {showWorkspace && (
+        <WorkspacePanel token={token} onClose={() => setShowWorkspace(false)} />
       )}
 
       {/* Off-screen; revealed only when printing (Alerts → Print / Save as PDF). */}

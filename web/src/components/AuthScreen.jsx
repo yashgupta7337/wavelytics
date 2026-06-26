@@ -114,7 +114,7 @@ export default function AuthScreen({ initialMode = "signin", onAuthed, onSkip })
     setBusy(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/app/?auth=signin`,
+        redirectTo: `${window.location.origin}/app/?recovery=1`,
       });
       if (error) throw error;
       setSigninFailed(false);
