@@ -328,6 +328,17 @@ function Hero() {
                   stroke="#38bdf8"
                   strokeWidth="2"
                 />
+                {/* A bright highlight that traces along the line on a loop —
+                    reads as live data flowing in. (CSS in index.css.) */}
+                <path
+                  className="spark-trace"
+                  d="M0 60 L60 52 L120 56 L180 40 L240 44 L300 30 L360 34 L420 22 L480 26 L540 14 L600 18"
+                  fill="none"
+                  stroke="#bae6fd"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  pathLength="100"
+                />
               </svg>
             </div>
           </Card>

@@ -91,6 +91,23 @@ body {
   animation: tab-glow 5s ease-in-out infinite;
 }
 
+/* Landing hero sparkline: a short bright segment travels along the line on a
+   loop (pathLength is normalized to 100, so the dash values are percentages).
+   The soft glow makes it read as a live pulse moving through the data. */
+@keyframes spark-trace {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.spark-trace {
+  stroke-dasharray: 16 84;
+  filter: drop-shadow(0 0 3px rgba(56, 189, 248, 0.65));
+  animation: spark-trace 3.2s linear infinite;
+}
+
 /* Animated moving-gradient text for impactful titles. */
 @keyframes gradient-flow {
   to {
@@ -222,8 +239,12 @@ body {
   .gradient-text,
   .aurora-blob,
   .fade-up,
-  .tab-glow {
+  .tab-glow,
+  .spark-trace {
     animation: none;
+  }
+  .spark-trace {
+    display: none;
   }
   .reveal {
     opacity: 1;
