@@ -237,13 +237,7 @@ function Nav() {
 function Hero() {
   return (
     <section id="top" className="relative overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-60"
-        style={{
-          background:
-            "radial-gradient(60% 50% at 50% 0%, rgba(56,189,248,0.18) 0%, rgba(11,17,32,0) 70%)",
-        }}
-      />
+      <div className="hero-glow pointer-events-none absolute inset-0 -z-10" />
       <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28">
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-3 py-1 text-xs text-muted">
@@ -634,8 +628,8 @@ function About() {
               <p className="text-xs font-medium text-sky-400">{m.role}</p>
               <p className="mt-2 text-sm text-muted">{m.bio}</p>
               {/* Education — a subdued credential footnote, not part of the bio.
-                  Pinned to the card's bottom edge so it reads as a footnote. */}
-              <p className="mt-auto w-full border-t border-line pt-3 text-xs text-faint">
+                  Equal space above and below the divider so it reads cleanly. */}
+              <p className="mt-5 w-full border-t border-line pt-5 text-xs text-faint">
                 {m.edu}
               </p>
             </Card>

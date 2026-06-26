@@ -24,6 +24,14 @@
   --ink: #1e2a3d;
   --muted: #54627a;
   --faint: #8693a8;
+  /* Soft top-of-page wash (sky with a hint of indigo) so the background isn't
+     a flat fill. Kept gentle on the lighter surface. */
+  --hero-glow: radial-gradient(
+    72% 56% at 50% 0%,
+    rgba(56, 189, 248, 0.18),
+    rgba(99, 102, 241, 0.08) 40%,
+    transparent 72%
+  );
 }
 
 /* Dark theme — the original Wavelytics palette. */
@@ -36,6 +44,19 @@
   --ink: #e2e8f0;
   --muted: #94a3b8;
   --faint: #64748b;
+  /* A touch more presence on the dark navy, still subtle. */
+  --hero-glow: radial-gradient(
+    74% 60% at 50% 0%,
+    rgba(56, 189, 248, 0.22),
+    rgba(99, 102, 241, 0.1) 38%,
+    transparent 72%
+  );
+}
+
+/* Top-of-page background wash for the landing hero (theme-aware via the
+   --hero-glow variable above). */
+.hero-glow {
+  background: var(--hero-glow);
 }
 
 /* Smooth in-page navigation, offset for the sticky navbar. */
