@@ -69,6 +69,30 @@ app.get("/api/me", requireAuth, async (req, res) => {
   }
 });
 
+// The tenant's members (read-only; enrollment is by email domain).
+app.get("/api/members", requireAuth, async (req, res) => {
+  if (!isUsingDb()) return res.json({ members: [] });
+  try {
+    const tenantId = await db.resolveTenant(req.user);
+    res.json({ members: await db.getTenantMembers(tenantId) });
+  } catch (err) {
+    console.error("[api] /api/members failed:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
+// The tenant's recent CSV uploads (audit of who refreshed the data and when).
+app.get("/api/uploads", requireAuth, async (req, res) => {
+  if (!isUsingDb()) return res.json({ uploads: [] });
+  try {
+    const tenantId = await db.resolveTenant(req.user);
+    res.json({ uploads: await db.getRecentUploads(tenantId, { limit: 20 }) });
+  } catch (err) {
+    console.error("[api] /api/uploads failed:", err.message);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 // CSV template so clients know the exact format to upload.
 app.get("/api/template.csv", (req, res) => {
   res.type("text/csv").send(TEMPLATE_CSV);

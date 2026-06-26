@@ -5,6 +5,7 @@
 // runs entirely on the simulated feed — so the API works with zero setup.
 import { seedData, nextData } from "./feed.js";
 import { db } from "./db.js";
+import { buildTrendFromHistory } from "./csv.js";
 
 const TICK_MS = 3000;
 
@@ -16,10 +17,8 @@ export async function initStore() {
   if (process.env.DATABASE_URL) {
     try {
       await db.init();
-      const latest = await db.loadLatest();
-      if (latest) current = latest;
       usingDb = true;
-      console.log("[store] Postgres connected — persisting live metrics");
+      console.log("[store] Postgres connected — tenant uploads will persist");
     } catch (err) {
       console.warn(
         `[store] Postgres unavailable (${err.message}); using simulated feed`
@@ -29,15 +28,12 @@ export async function initStore() {
     console.log("[store] No DATABASE_URL — running on simulated feed");
   }
 
-  timer = setInterval(async () => {
+  // The public/demo feed is simulated and ephemeral — advance it in memory only.
+  // We deliberately do NOT persist it (it used to write a snapshot every tick,
+  // which floods the database for no benefit; it regenerates from seedData on
+  // boot). Only tenant CSV uploads are persisted, via saveTenantSnapshot.
+  timer = setInterval(() => {
     current = nextData(current);
-    if (usingDb) {
-      try {
-        await db.persist(current);
-      } catch (err) {
-        console.warn("[store] persist failed:", err.message);
-      }
-    }
   }, TICK_MS);
 }
 
@@ -52,7 +48,14 @@ export async function getTenantSnapshot(tenantId) {
   if (!usingDb || !tenantId) return current;
   try {
     const latest = await db.loadLatest(tenantId);
-    return latest ?? current;
+    if (!latest) return current;
+    // Once the tenant has >= 2 uploads, replace the synthetic per-upload trend
+    // with a real series built from their upload history.
+    const history = await db.getSnapshotHistory(tenantId, { limit: 12 });
+    if (history.length >= 2) {
+      return { ...latest, trend: buildTrendFromHistory(history) };
+    }
+    return latest;
   } catch (err) {
     console.warn("[store] tenant snapshot load failed:", err.message);
     return current;

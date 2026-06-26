@@ -144,6 +144,18 @@ export const db = {
     return rows[0] ?? null;
   },
 
+  // The people in a tenant (owner first, then by join date). Read-only: members
+  // join automatically by email domain (see resolveTenant), so there's no invite.
+  async getTenantMembers(tenantId) {
+    const { rows } = await pool.query(
+      `SELECT email, role, created_at
+         FROM tenant_members WHERE tenant_id = $1
+         ORDER BY (role = 'owner') DESC, created_at ASC`,
+      [tenantId]
+    );
+    return rows;
+  },
+
   // ---- snapshots -----------------------------------------------------------
 
   async persist(snapshot, tenantId = null) {
@@ -163,12 +175,39 @@ export const db = {
     return rows[0]?.payload ?? null;
   },
 
+  // The last N snapshots for a tenant (newest first). Each tenant row is one
+  // CSV upload, so this is the real upload history used to build a trend.
+  async getSnapshotHistory(tenantId, { limit = 12 } = {}) {
+    const { rows } = await pool.query(
+      `SELECT captured_at, payload FROM metrics_snapshots
+         WHERE tenant_id = $1 ORDER BY id DESC LIMIT $2`,
+      [tenantId, limit]
+    );
+    return rows;
+  },
+
   async recordUpload({ tenantId, uploadedBy, filename, rowCount }) {
     await pool.query(
       `INSERT INTO metric_uploads (tenant_id, uploaded_by, filename, row_count)
          VALUES ($1, $2, $3, $4)`,
       [tenantId, uploadedBy ?? null, filename ?? null, rowCount ?? 0]
     );
+  },
+
+  // Recent uploads with the uploader's email resolved via tenant_members.
+  async getRecentUploads(tenantId, { limit = 20 } = {}) {
+    const { rows } = await pool.query(
+      `SELECT mu.id, mu.filename, mu.row_count, mu.captured_at, mu.uploaded_by,
+              tm.email AS uploaded_by_email
+         FROM metric_uploads mu
+         LEFT JOIN tenant_members tm
+           ON tm.user_id = mu.uploaded_by AND tm.tenant_id = mu.tenant_id
+        WHERE mu.tenant_id = $1
+        ORDER BY mu.id DESC
+        LIMIT $2`,
+      [tenantId, limit]
+    );
+    return rows;
   },
 
   // ---- alert rules & events ------------------------------------------------

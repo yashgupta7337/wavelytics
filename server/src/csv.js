@@ -171,6 +171,33 @@ export function buildSnapshot(rows) {
   return { snapshot: s, applied };
 }
 
+// Build a real trend series from a tenant's upload history (the newest-first
+// rows from db.getSnapshotHistory). Each past upload becomes one point, ordered
+// oldest -> newest, so the Executive/Operational charts show actual history
+// instead of the synthetic per-snapshot trend. Defensive against old/partial
+// payloads so a single bad row never breaks the chart.
+export function buildTrendFromHistory(rows) {
+  return [...rows].reverse().map(({ captured_at, payload }) => {
+    const p = payload || {};
+    const exec = p.executive || {};
+    const byCat = p.risk?.byCategory || [];
+    const completed = Number(exec.completed) || 0;
+    return {
+      t: new Date(captured_at).toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      }),
+      processed: Number(exec.processedToday) || 0,
+      completed,
+      throughput: Number(p.operational?.completed) || completed,
+      openRisks: byCat.reduce(
+        (n, c) => n + (Number(c.high) || 0) + (Number(c.medium) || 0),
+        0
+      ),
+    };
+  });
+}
+
 export const TEMPLATE_CSV = `metric,value
 reporting_accuracy,96.5
 processing_speed_hrs,3.2
