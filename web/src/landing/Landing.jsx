@@ -634,19 +634,6 @@ function About() {
             </Card>
           ))}
         </div>
-
-        <p className="mt-10 text-center text-xs text-faint">
-          Part of{" "}
-          <a
-            href="https://waveconnect.net.in"
-            target="_blank"
-            rel="noreferrer"
-            className="text-muted underline-offset-2 hover:text-ink hover:underline"
-          >
-            WaveConnect Communications Pvt. Ltd.
-          </a>{" "}
-          · New Delhi, India
-        </p>
       </div>
     </section>
   );

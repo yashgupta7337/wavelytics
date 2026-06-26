@@ -1,7 +1,16 @@
-// Wavelytics wave logo mark. Animated via the .wave-mark rules in index.css:
-// the stroke colour drifts through blue/cyan/indigo shades with a soft pulsing
-// glow (respects prefers-reduced-motion). Used in the landing nav/footer, the
-// dashboard header, and the auth screen.
+// Wavelytics wave logo mark. Two ripple lines flow horizontally (seamless loop
+// via the SMIL translate — the wave repeats every 8 units, so translating by 8
+// is invisible). A constant soft glow + a very subtle blue tint come from the
+// .wave-mark rules in index.css. The flow is skipped under reduced-motion.
+const reduceMotion =
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+// One tileable wave, 8-unit period, drawn wide (x: -8 → 36) so 0–24 stays
+// covered through the whole -8 translate.
+const WAVE =
+  "q2 -2.4 4 0 t4 0 t4 0 t4 0 t4 0 t4 0 t4 0 t4 0 t4 0 t4 0";
+
 export default function WaveMark({ className = "h-6 w-6" }) {
   return (
     <svg
@@ -14,8 +23,20 @@ export default function WaveMark({ className = "h-6 w-6" }) {
       className={`wave-mark ${className}`}
       aria-hidden="true"
     >
-      <path d="M2 8c2 0 2 1.8 4 1.8S8 8 10 8s2 1.8 4 1.8S16 8 18 8s2 1.8 4 1.8" />
-      <path d="M2 14c2 0 2 1.8 4 1.8S8 14 10 14s2 1.8 4 1.8S16 14 18 14s2 1.8 4 1.8" />
+      <g>
+        <path d={`M-8 9 ${WAVE}`} />
+        <path d={`M-8 15 ${WAVE}`} />
+        {!reduceMotion && (
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            from="0 0"
+            to="-8 0"
+            dur="2.4s"
+            repeatCount="indefinite"
+          />
+        )}
+      </g>
     </svg>
   );
 }
