@@ -5,8 +5,8 @@ export default function Compliance({ data, status = {} }) {
   const { compliance: c } = data;
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="flex flex-col gap-3 lg:h-full lg:min-h-0">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <KpiCard label="Audit Readiness" value={c.auditReadiness} unit="%"
           tone={toneFor(status, "audit_readiness", "warn")} />
         <KpiCard label="Pending Tasks" value={c.pendingTasks}
@@ -16,8 +16,8 @@ export default function Compliance({ data, status = {} }) {
           tone={toneFor(status, "expiring_docs", "warn")} />
       </div>
 
-      <Card title="Compliance Status by Area">
-        <div className="space-y-4">
+      <Card title="Compliance Status by Area" className="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+        <div className="space-y-4 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
           {c.byArea.map((a) => (
             <div key={a.area}>
               <div className="mb-1 flex items-center justify-between text-sm">

@@ -26,9 +26,9 @@ export function KpiCard({ label, value, unit, tone = "default", hint }) {
   return (
     <Card>
       <p className="text-xs uppercase tracking-wide text-muted">{label}</p>
-      <p className={`mt-1 text-3xl font-bold tabular-nums ${tones[tone]}`}>
+      <p className={`mt-1 text-2xl font-bold tabular-nums ${tones[tone]}`}>
         {value}
-        {unit && <span className="ml-1 text-lg font-medium text-muted">{unit}</span>}
+        {unit && <span className="ml-1 text-base font-medium text-muted">{unit}</span>}
       </p>
       {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
     </Card>

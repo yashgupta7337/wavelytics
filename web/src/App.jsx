@@ -122,9 +122,9 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <header className="border-b border-line bg-surface/40 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex min-h-dvh flex-col overflow-x-hidden lg:h-dvh lg:overflow-hidden">
+      <header className="flex-none border-b border-line bg-surface/40 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <a href="/" className="flex items-center gap-2">
             <WaveMark className="h-7 w-7 shrink-0" />
             <span>
@@ -224,29 +224,35 @@ export default function App() {
         </div>
       </div>
 
-      <nav className="border-b border-line bg-surface/20">
-        <div className="mx-auto flex max-w-7xl gap-1 px-4">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActive(t.id)}
-              className={`border-b-2 px-4 py-3 text-sm font-medium transition ${
-                active === t.id
-                  ? "border-sky-400 text-sky-300"
-                  : "border-transparent text-muted hover:text-ink"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+      <nav className="flex-none border-b border-line bg-surface/20">
+        {/* Horizontally scrollable on narrow screens so every tab (incl. Alerts)
+            stays reachable; the inner strip clips the surfing glow to the tabs. */}
+        <div className="mx-auto max-w-7xl overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="relative inline-flex w-max gap-1 overflow-hidden">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setActive(t.id)}
+                className={`relative z-10 shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition ${
+                  active === t.id
+                    ? "border-sky-400 text-sky-300"
+                    : "border-transparent text-muted hover:text-ink"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+            {/* Glow that surfs across the section labels (CSS in index.css). */}
+            <span className="tab-surf" aria-hidden="true" />
+          </div>
         </div>
       </nav>
 
-      <main className="mx-auto max-w-7xl px-4 py-6">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-4 lg:flex lg:min-h-0 lg:flex-col">
         <Component data={data} status={alerts.statusByMetric} alerts={alerts} token={token} />
       </main>
 
-      <footer className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-faint">
+      <footer className="flex-none px-4 py-2 text-center text-[11px] text-faint">
         © 2026 Wavelytics · a product by WaveConnect
       </footer>
 

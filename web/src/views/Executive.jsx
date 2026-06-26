@@ -15,8 +15,8 @@ export default function Executive({ data, status = {} }) {
   const healthy = executive.health === "Healthy";
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="flex flex-col gap-3 lg:h-full lg:min-h-0">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Card>
           <p className="text-xs uppercase tracking-wide text-muted">Overall Health</p>
           <div className="mt-2">
@@ -28,7 +28,7 @@ export default function Executive({ data, status = {} }) {
         <KpiCard label="Pending" value={executive.pending} tone="warn" />
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <KpiCard label="Reporting Accuracy" value={kpis.reportingAccuracy} unit="%"
           tone={toneFor(status, "reporting_accuracy", "good")} />
         <KpiCard label="Workflow Completion" value={kpis.workflowCompletion} unit="%"
@@ -37,8 +37,10 @@ export default function Executive({ data, status = {} }) {
           tone={toneFor(status, "compliance_readiness", "warn")} />
       </div>
 
-      <Card title="Throughput Trend" subtitle="Processed vs. completed (live)">
-        <ResponsiveContainer width="100%" height={280}>
+      <Card title="Throughput Trend" subtitle="Processed vs. completed (live)"
+        className="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+        <div className="h-[280px] w-full min-w-0 lg:h-auto lg:min-h-0 lg:flex-1">
+        <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={trend}>
             <defs>
               <linearGradient id="gProc" x1="0" y1="0" x2="0" y2="1">
@@ -58,6 +60,7 @@ export default function Executive({ data, status = {} }) {
             <Area type="monotone" dataKey="completed" stroke="#34d399" fill="url(#gComp)" />
           </AreaChart>
         </ResponsiveContainer>
+        </div>
       </Card>
     </div>
   );

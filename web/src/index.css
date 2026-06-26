@@ -66,6 +66,35 @@ body {
   filter: drop-shadow(0 0 2.5px rgba(56, 189, 248, 0.45));
 }
 
+/* Dashboard section tabs: a soft glow "surfs" left→right across the labels,
+   brightening each one as it passes (mix-blend screen lifts the text it covers).
+   The element is wider than a single tab so the light feels continuous. */
+@keyframes tab-surf {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+.tab-surf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 42%;
+  pointer-events: none;
+  border-radius: 9999px;
+  background: radial-gradient(
+    closest-side,
+    rgba(56, 189, 248, 0.5),
+    rgba(56, 189, 248, 0) 72%
+  );
+  filter: blur(8px);
+  mix-blend-mode: screen;
+  animation: tab-surf 5s ease-in-out infinite;
+}
+
 /* Animated moving-gradient text for impactful titles. */
 @keyframes gradient-flow {
   to {
@@ -198,6 +227,9 @@ body {
   .aurora-blob,
   .fade-up {
     animation: none;
+  }
+  .tab-surf {
+    display: none;
   }
   .reveal {
     opacity: 1;

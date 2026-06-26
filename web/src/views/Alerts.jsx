@@ -33,8 +33,8 @@ export default function Alerts({ alerts, token }) {
   const overallSev = overall === "critical" ? "high" : overall === "attention" ? "med" : "good";
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 lg:h-full lg:min-h-0">
+      <div className="flex flex-none flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Badge sev={overallSev}>{overall.toUpperCase()}</Badge>
           <span className="text-sm text-muted">
@@ -63,11 +63,12 @@ export default function Alerts({ alerts, token }) {
         )}
       </div>
 
-      <Card title="Active alerts" subtitle="Metrics currently breaching their thresholds">
+      <Card title="Active alerts" subtitle="Metrics currently breaching their thresholds"
+        className="lg:flex lg:max-h-[40%] lg:min-h-0 lg:flex-col">
         {breaches.length === 0 ? (
           <p className="text-sm text-muted">All metrics are within their thresholds.</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-2 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
             {breaches.map((r) => (
               <li
                 key={r.metric_key}
@@ -81,13 +82,14 @@ export default function Alerts({ alerts, token }) {
         )}
       </Card>
 
-      <Card title="Alert history" subtitle="Recorded breaches from CSV uploads (audit trail)">
+      <Card title="Alert history" subtitle="Recorded breaches from CSV uploads (audit trail)"
+        className="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
         {events.length === 0 ? (
           <p className="text-sm text-muted">
             No recorded breaches yet. Uploads that cross a threshold are logged here.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
             <table className="w-full text-left text-sm">
               <thead className="text-xs uppercase tracking-wide text-faint">
                 <tr>
