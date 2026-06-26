@@ -75,12 +75,15 @@ body {
   24%,
   100% {
     text-shadow: none;
-    filter: none;
   }
   10% {
-    text-shadow: 0 0 7px rgba(56, 189, 248, 0.75),
-      0 0 12px rgba(56, 189, 248, 0.35);
-    filter: brightness(1.4);
+    /* Light the glyphs themselves sky-blue (not a blue halo around dark text),
+       so it reads correctly whether the label is dark (unselected) or already
+       sky (selected). The non-peak keyframes omit `color`, so it falls back to
+       each label's real color. */
+    color: #38bdf8;
+    text-shadow: 0 0 7px rgba(56, 189, 248, 0.7),
+      0 0 12px rgba(56, 189, 248, 0.3);
   }
 }
 .tab-glow {

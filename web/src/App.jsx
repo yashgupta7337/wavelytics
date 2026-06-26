@@ -235,7 +235,7 @@ export default function App() {
                 onClick={() => setActive(t.id)}
                 className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition ${
                   active === t.id
-                    ? "border-sky-400 text-sky-300"
+                    ? "border-sky-400 text-[#7dd3fc]"
                     : "border-transparent text-muted hover:text-ink"
                 }`}
               >
