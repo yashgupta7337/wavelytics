@@ -91,21 +91,36 @@ body {
   animation: tab-glow 5s ease-in-out infinite;
 }
 
-/* Landing hero sparkline: a short bright segment travels along the line on a
-   loop (pathLength is normalized to 100, so the dash values are percentages).
-   The soft glow makes it read as a live pulse moving through the data. */
-@keyframes spark-trace {
+/* Landing hero sparkline: the traveling highlight is a soft gradient band that
+   slides along the line (the SMIL animation lives in Landing.jsx). Here we just
+   add a gentle glow so it reads as a live pulse moving through the data. */
+.spark-trace {
+  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.8));
+  /* Reveal the bright line only through a soft band that sweeps across. The
+     gradient mask feathers both ends, so the highlight melts into the base
+     line rather than starting/stopping abruptly. */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 50%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(90deg, transparent 0%, #000 50%, transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 42% 100%;
+  mask-size: 42% 100%;
+  animation: spark-sweep 6.5s linear infinite;
+}
+@keyframes spark-sweep {
   from {
-    stroke-dashoffset: 100;
+    -webkit-mask-position: -45% 0;
+    mask-position: -45% 0;
   }
   to {
-    stroke-dashoffset: 0;
+    -webkit-mask-position: 145% 0;
+    mask-position: 145% 0;
   }
-}
-.spark-trace {
-  stroke-dasharray: 16 84;
-  filter: drop-shadow(0 0 3px rgba(56, 189, 248, 0.65));
-  animation: spark-trace 3.2s linear infinite;
 }
 
 /* Animated moving-gradient text for impactful titles. */
@@ -239,8 +254,7 @@ body {
   .gradient-text,
   .aurora-blob,
   .fade-up,
-  .tab-glow,
-  .spark-trace {
+  .tab-glow {
     animation: none;
   }
   .spark-trace {
