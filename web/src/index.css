@@ -60,21 +60,10 @@ body {
     fill 0.2s ease;
 }
 
-/* Wave logo: ripples flow horizontally (SMIL, in WaveMark.jsx). Here we add a
-   constant soft glow and a very subtle blue tint drift. */
-@keyframes wave-tint {
-  0%,
-  100% {
-    color: #38bdf8;
-  }
-  50% {
-    color: #56bdf6;
-  }
-}
+/* Wave logo: static mark with a constant soft glow. No motion, no gradient. */
 .wave-mark {
   color: #38bdf8;
   filter: drop-shadow(0 0 2.5px rgba(56, 189, 248, 0.45));
-  animation: wave-tint 7s ease-in-out infinite;
 }
 
 /* Animated moving-gradient text for impactful titles. */
@@ -207,8 +196,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .gradient-text,
   .aurora-blob,
-  .fade-up,
-  .wave-mark {
+  .fade-up {
     animation: none;
   }
   .reveal {
